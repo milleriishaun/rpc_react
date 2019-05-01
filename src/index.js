@@ -2,8 +2,190 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-class Game extends React.Component {
+function Move(props) {
+  return (
+    <button
+      className={"move" + (props.isWinning ? "--winning" : "")}
+      onClick={props.onClick}
+    >
+      {props.value}
+    </button>
+  );
+}
 
+class Player extends React.Component {
+
+  renderPlayer(i) {
+    return (
+      <Move
+        isWinning={this.props.winningPlayers.includes(i)}
+        key={"player " + i}
+        value={this.props.players[i]}
+        onClick={() => this.props.onClick(i)}
+      />
+    )
+  }
+  render() {
+    return (
+      <div>
+        <div>
+          <div className="player-column">
+            {this.renderPlayer(0)}
+          </div>
+          <div className="player-column">
+            {this.renderPlayer(1)}
+          </div>
+        </div>
+        <div className="battle-resolve">
+          <button id="resolveButton">Resolve</button>
+        </div>
+      </div>
+    )
+  }
+}
+
+class Menu extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedOption: 'attack1',
+      history: [{
+        players: Array(2).fill(null),
+      }],
+      stepNumber: 0,
+      p1IsNext: true,
+    };
+  }
+
+  handleClick(i) {
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    const current = history[history.length - 1];
+    const players = current.players.slice();
+
+    let p1Choice = 'X';
+    let p2Choice = 'O';
+
+    players[i] = this.state.p1IsNext ? p1Choice : p2Choice;
+
+    this.setState({
+      history: history.concat([{
+        players: players,
+      }]),
+      stepNumber: history.length,
+      p1IsNext: !this.state.p1IsNext,
+    });
+  }
+
+  handleOptionChange = changeEvent => {
+    this.setState({
+      selectedOption: changeEvent.target.value,
+    });
+  };
+
+  handleFormSubmit = formSubmitEvent => {
+    formSubmitEvent.preventDefault();
+    alert("You have submitted: " + this.state.selectedOption);
+  }
+
+  render() {
+    
+    const history = this.state.history;
+    const current = history[this.state.stepNumber];
+    const winner = calculateWinner(current.players);
+
+    let p1Choice = 'X';
+    let p2Choice = 'O';
+
+    let status;
+    if(winner) {
+      status = 'Winner: ' + winner.gesture;
+    } else if(!current.players.includes(null)) {
+      status = 'Draw!'
+    } else {
+      status = 'Next player: ' + (this.state.p1IsNext ? p1Choice : p2Choice);
+    }
+
+    return (
+      <div className="game-players">
+        <div className="container">
+          <div className="row mt-5">
+            <div className="col-sm-12">
+              <form onsSubmit={this.handleFormSubmit}>
+                <div className="form-check">
+                  <label for="attack1" id="attack1_label">
+                    <input type="radio" name="attack" value="attack1" checked={this.state.selectedOption === "attack1"} onChange={this.handleOptionChange} className="form-check-input" id="attack1"/>
+                    Fire Ball!
+                  </label>
+                  <br/>
+                </div>
+                <div className="form-check">
+                  <label for="attack2" id="attack2_label">
+                    <input type="radio" name="attack" value="attack2" checked={this.state.selectedOption === "attack2"} onChange={this.handleOptionChange} className="form-check-input" id="attack2"/>
+                    Lightning Bolt!
+                  </label>
+                  <br/>
+                </div>
+                <div className="form-check">
+                  <label for="attack3" id="attack3_label">
+                    <input type="radio" name="attack" value="attack3" checked={this.state.selectedOption === "attack3"} onChange={this.handleOptionChange} className="form-check-input" id="attack3"/>
+                    Water Blast!
+                  </label>
+                  <br/>
+                </div>
+                <div className="form-check">
+                  <label for="attack4" id="attack4_label">
+                    <input type="radio" name="attack" value="attack4" checked={this.state.selectedOption === "attack4"} onChange={this.handleOptionChange} className="form-check-input" id="attack4"/>
+                    Wind Gust!
+                  </label>
+                  <br/>
+                </div>
+                <div className="form-check">
+                  <label for="attack5" id="attack5_label">
+                    <input type="radio" name="attack" value="attack5" checked={this.state.selectedOption === "attack5"} onChange={this.handleOptionChange} className="form-check-input" id="attack5"/>
+                    Earth Stomp!
+                  </label>
+                  <br/>
+                </div>
+                <div className="form-group">
+                  <button className="btn btn-primary mt-2" type="submit" id="attackButton">
+                    Attack!
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <Player
+          winningPlayers={winner ? winner.whichP : []}
+          players={current.players}
+          onClick={(i) => this.handleClick(i)}
+        />
+      </div>
+    );
+  }
+}
+
+class Game extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: 'spock',
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({
+      value: event.target.value
+    });
+  }
+
+  handleSubmit(event) {
+    alert('Your chosen gesture is: ', this.state.value);
+    event.preventDefault();
+  }
   render() {
 
     // These are variables to hold data
@@ -37,37 +219,33 @@ class Game extends React.Component {
     return (
       // this is the HTML
       // note that React has its own Form component and system
-      <div>
-        <h1 id="header"> Block, Paper, Scissors </h1>
-
-        <select id="menu">
-            <option value="mage">Mage</option>
-            <option value="melee">Melee</option>
-            <option value="yolo">YOLO</option>
-            <option value="spock">Spock</option>
-            <option value="whale">Whale</option>
-        </select>
-
-        <p id="p1"> ??? </p>
-        <p id="p2"> ??? </p>
-        <p id="p3"> ??? </p>
-        <p id="p4"> ??? </p>
-
-        <form>
-            <input type="radio" name="attack" value="attack1" id="attack1"/>
-            <label for="attack1" id="attack1_label">Fire Ball!</label><br/>
-            <input type="radio" name="attack" value="attack2" id="attack2"/>
-            <label for="attack2" id="attack2_label">Lightning Bolt!</label><br/>
-            <input type="radio" name="attack" value="attack3" id="attack3"/>
-            <label for="attack3" id="attack3_label">Water Blast!</label><br/>
-            <input type="radio" name="attack" value="attack4" id="attack4"/>
-            <label for="attack4" id="attack4_label">Wind Gust!</label><br/>
-            <input type="radio" name="attack" value="attack5" id="attack5"/>
-            <label for="attack5" id="attack5_label">Earth Stomp!</label><br/>
-        </form>
-
-        <button id="attackButton"> Attack! </button><br/>
-        <button id="resolveButton"> Resolve </button><br/>
+      <div className="game">
+        <div className="game-title">
+          <h1 id="header"> Block, Paper, Scissors </h1>
+        </div>
+        <div className="game-menu">
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Choose a new battle campaign!
+              <select
+                value={this.state.value}
+                onChange={this.handleChange}
+                id="menu"
+              >
+                <option value="mage">Mage</option>
+                <option value="melee">Melee</option>
+                <option value="yolo">YOLO</option>
+                <option value="spock">Spock</option>
+                <option value="whale">Whale</option>
+              </select>
+            </label>
+            <input
+              type="submit"
+              value="Submit"
+            />
+          </form>
+        </div>
+        <Menu />
       </div>
     );
   }
