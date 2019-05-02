@@ -3,21 +3,63 @@ body {
   margin: 20px;
 }
 
-ol, ul {
+/* ol, ul {
   padding-left: 30px;
+} */
+
+.kbd-navigation .player:focus {
+  background: #ddd;
 }
 
-.board-row:after {
+.game {
+  display: flex;
+  flex-direction: row;
+}
+
+.game-title {
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  margin-right: 20px;
+  margin-bottom: 50px;
+  font-family: Helvetica;
+  font-size: 50px;
+  order: 1;
+}
+
+.game-menu {
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  margin-right: 20px;
+  margin-bottom: 50px;
+  font-family: Helvetica;
+  font-size: 50px;
+  order: 2;
+}
+
+.game-players {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  order: 3;
+}
+
+.game-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px;
+  order: 4;
+}
+
+.player-column:after {
   clear: both;
   content: "";
   display: table;
 }
 
-.status {
-  margin-bottom: 50px;
-}
-
-.square {
+.player {
   background: #fff;
   border: 1px solid #999;
   float: left;
@@ -29,14 +71,14 @@ ol, ul {
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 34px;
+  width: 300px;
 }
 
-.square:focus {
+.player:focus {
   outline: none;
 }
 
-.square--winning {
+.player--winning {
   background: aqua;
   border: 1px solid #999;
   float: left;
@@ -48,49 +90,28 @@ ol, ul {
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 34px;
+  width: 300px;
 }
 
-.kbd-navigation .square:focus {
-  background: #ddd;
-}
 
-.game {
-  display: flex;
-  flex-direction: column;
-}
-
-.game-title {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: 20px;
-  margin-bottom: 50px;
-  font-family: Helvetica;
-  font-size: 50px;
-  order: 1;
-}
-
-.game-board {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  order: 2;
-}
-
-.game-info {
+.battle-resolve {
+  background: purple;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 50px;
-  order: 3;
+  order: 5;
+}
+
+.status {
+  margin-bottom: 50px;
 }
 
 .move-list {
   display: flex;
   flex-direction: column;
   align-items: center;
-  order: 4;
+  order: 6;
   /* when add width, also adds right-align */
   /* width: 100px; */
 }

@@ -87,8 +87,33 @@ class Menu extends React.Component {
     alert("You have submitted: " + this.state.selectedOption);
   }
 
+  handleResolve(event) {
+    alert('The winner of the battle is: ', this.state.selectedOption);
+    event.preventDefault();
+  }
+  
   render() {
     
+    // These are variables to hold data
+    var reverse = false;
+    var HIT_POINTS = 500;
+    var SOFT_DAMAGE = 100;
+    var HARD_DAMAGE = 200;
+    var softCounter = SOFT_DAMAGE;
+    var hardCounter = HARD_DAMAGE;
+
+    var player1 = {
+        name:"edicted",
+        hp:HIT_POINTS,
+        choice:""
+    };
+
+    var player2 = {
+        name:"shadow",
+        hp:HIT_POINTS,
+        choice:""
+    };
+
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.players);
@@ -183,38 +208,10 @@ class Game extends React.Component {
   }
 
   handleSubmit(event) {
-    alert('Your chosen gesture is: ', this.state.value);
+    alert('Your chosen battle campaign is: ', this.state.value);
     event.preventDefault();
   }
   render() {
-
-    // These are variables to hold data
-    var reverse = false;
-    var HIT_POINTS = 500;
-    var SOFT_DAMAGE = 100;
-    var HARD_DAMAGE = 200;
-    var softCounter = SOFT_DAMAGE;
-    var hardCounter = HARD_DAMAGE;
-
-    var player1 = {
-        name:"edicted",
-        hp:HIT_POINTS,
-        choice:""
-    };
-
-    var player2 = {
-        name:"shadow",
-        hp:HIT_POINTS,
-        choice:""
-    };
-
-    // this is the Game update logic which needs to turn into onClicks within
-    // the render-return of Game.
-    document.getElementById("attackButton").onclick = attack;
-    document.getElementById("resolveButton").onclick = resolve;
-    document.getElementById("menu").onchange = menu;
-
-    update();
 
     return (
       // this is the HTML
@@ -255,6 +252,26 @@ ReactDOM.render(
   <Game />,
   document.getElementById('root')
 );
+
+function calculateWinner(players) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return { player: squares[a], line: [a, b, c] };
+    }
+  }
+  return null;
+}
 
 function menu(){
   var option = document.getElementById('menu').value;
