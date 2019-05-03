@@ -14,6 +14,20 @@ function Move(props) {
 }
 
 class Player extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: "",
+      hp: 500,
+      choice:"",
+      reverse: false,
+      HIT_POINTS: 500,
+      SOFT_DAMAGE: 100,
+      HARD_DAMAGE: 200,
+      softCounter: 100,
+      hardCounter: 200,
+    };
+  }
 
   renderPlayer(i) {
     return (
@@ -25,7 +39,35 @@ class Player extends React.Component {
       />
     )
   }
+
+  handleResolve(event) {
+    if(this.state.choice == "") {
+
+      if (document.getElementById('attack1').checked) {
+        this.state.choice = document.getElementById('attack1').value;
+      } else if (document.getElementById('attack2').checked) {
+        this.state.choice = document.getElementById('attack2').value;
+      } else if (document.getElementById('attack3').checked) {
+        this.state.choice = document.getElementById('attack3').value;
+      } else if (document.getElementById('attack4').checked) {
+        this.state.choice = document.getElementById('attack4').value;
+      } else if (document.getElementById('attack5').checked) {
+        this.state.choice = document.getElementById('attack5').value;
+      } else {
+        alert("No attack selected!");
+      }
+
+    } else {
+      alert("Both players have chosen!");
+    }
+    
+    let damage = resolve(this);
+    alert('The loser of the battle took this much damage: ', damage);
+    event.preventDefault();
+  }
+
   render() {
+
     return (
       <div>
         <div>
@@ -37,7 +79,7 @@ class Player extends React.Component {
           </div>
         </div>
         <div className="battle-resolve">
-          <button id="resolveButton">Resolve</button>
+          <button onClick={this.handleResolve} id="resolveButton">Resolve</button>
         </div>
       </div>
     )
@@ -86,33 +128,8 @@ class Menu extends React.Component {
     formSubmitEvent.preventDefault();
     alert("You have submitted: " + this.state.selectedOption);
   }
-
-  handleResolve(event) {
-    alert('The winner of the battle is: ', this.state.selectedOption);
-    event.preventDefault();
-  }
   
   render() {
-    
-    // These are variables to hold data
-    var reverse = false;
-    var HIT_POINTS = 500;
-    var SOFT_DAMAGE = 100;
-    var HARD_DAMAGE = 200;
-    var softCounter = SOFT_DAMAGE;
-    var hardCounter = HARD_DAMAGE;
-
-    var player1 = {
-        name:"edicted",
-        hp:HIT_POINTS,
-        choice:""
-    };
-
-    var player2 = {
-        name:"shadow",
-        hp:HIT_POINTS,
-        choice:""
-    };
 
     const history = this.state.history;
     const current = history[this.state.stepNumber];
@@ -254,6 +271,7 @@ ReactDOM.render(
 );
 
 function calculateWinner(players) {
+  alert('Both players have chosen!');
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -273,6 +291,7 @@ function calculateWinner(players) {
   return null;
 }
 
+/* 
 function menu(){
   var option = document.getElementById('menu').value;
   if(option == "mage"){
@@ -323,30 +342,9 @@ function menu(){
       hardCounter = HARD_DAMAGE;
   }
 }
+ */
 
-function attack(){
-  if(player1.choice == ""){
-      if (document.getElementById('attack1').checked)
-          player1.choice = document.getElementById('attack1').value;
-      else if (document.getElementById('attack2').checked)
-          player1.choice = document.getElementById('attack2').value;
-      else if (document.getElementById('attack3').checked)
-          player1.choice = document.getElementById('attack3').value;
-      else if (document.getElementById('attack4').checked)
-          player1.choice = document.getElementById('attack4').value;
-      else if (document.getElementById('attack5').checked)
-          player1.choice = document.getElementById('attack5').value;
-      else alert("No attack selected!");
-  }
-  else if (player2.choice == ""){
-      var attack = document.querySelector('input[name = "attack"]:checked');
-      player2.choice = attack.value;
-  }
-  else alert("Both players have chosen!");
-  update();
-}
-
-function resolve(){
+function resolve(props){
   /*
   attack1 counters attack2 and attack4
   attack2 counters attack5 and attack3
@@ -354,7 +352,7 @@ function resolve(){
   attack4 counters attack3 and attack2
   attack5 counters attack4 and attack1
   //*/
-  if(player1.choice != "" && player2.choice != ""){
+  if(player1.this.state.choice != "" && player2.choice != ""){
       if(player1.choice == document.getElementById('attack1').value){
           if(player2.choice == document.getElementById('attack2').value)
               player2.hp -= softCounter;
@@ -421,15 +419,4 @@ function resolve(){
 
 function gameOver(deadPlayer){
   alert("GAME OVER! " + deadPlayer.name + " has been vaporized!");
-}
-
-function update(){
-  document.getElementById("p1").innerHTML =
-  player1.name + " has " + player1.hp + " hp ";
-  document.getElementById("p2").innerHTML =
-  player2.name + " has " + player2.hp + " hp ";
-  document.getElementById("p3").innerHTML =
-  player1.name + " : " + player1.choice;
-  document.getElementById("p4").innerHTML =
-  player2.name + " : " + player2.choice;
 }

@@ -93,6 +93,13 @@ body {
   width: 300px;
 }
 
+.form-check {
+  background: yellow;
+}
+
+.form-group {
+  background: brown;
+}
 
 .battle-resolve {
   background: purple;
