@@ -38,11 +38,22 @@ body {
   order: 2;
 }
 
+.game-resolve {
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  margin-right: 20px;
+  margin-bottom: 50px;
+  font-family: Helvetica;
+  font-size: 50px;
+  order: 3;
+}
+
 .game-players {
   display: flex;
   align-items: center;
   flex-direction: column;
-  order: 3;
+  order: 4;
 }
 
 .game-info {
@@ -50,7 +61,7 @@ body {
   flex-direction: column;
   align-items: center;
   margin-bottom: 50px;
-  order: 4;
+  order: 5;
 }
 
 .player-column:after {
@@ -107,7 +118,7 @@ body {
   flex-direction: column;
   align-items: center;
   margin-bottom: 50px;
-  order: 5;
+  order: 6;
 }
 
 .status {
@@ -118,7 +129,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  order: 6;
+  order: 7;
   /* when add width, also adds right-align */
   /* width: 100px; */
 }
