@@ -1,3 +1,9 @@
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
 body {
   font: 14px "Century Gothic", Futura, sans-serif;
   margin: 20px;
@@ -7,35 +13,69 @@ body {
   padding-left: 30px;
 } */
 
-.kbd-navigation .player:focus {
-  background: #ddd;
+/* idk what this does */
+.kbd-navigation .game-player:focus {
+  background: rgb(156, 24, 24);
 }
 
 .game {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .game-title {
-  display: flex;
-  flex-direction: row;
   align-items: left;
-  margin-right: 20px;
-  margin-bottom: 50px;
+  margin-right: 0px;
+  margin-bottom: 0px;
   font-family: Helvetica;
   font-size: 50px;
-  order: 1;
+  border: 1px solid #999;
 }
 
 .game-menu {
-  display: flex;
-  flex-direction: row;
   align-items: left;
-  margin-right: 20px;
-  margin-bottom: 50px;
+  margin-right: 0px;
+  margin-bottom: 0px;
   font-family: Helvetica;
   font-size: 50px;
-  order: 2;
+  border: 1px solid #999;
+}
+
+.game-players {
+  display: flex;
+  align-items: left;
+  margin: 0px;
+  padding: 20px;
+  flex-direction: row;
+  border: 1px solid rgb(28, 211, 4);
+}
+
+.p1 {
+  color: blue;
+}
+
+.p1-form {
+  color: rgb(231, 126, 5);
+  border: 2px solid rgb(76, 8, 187);
+}
+
+.p2 {
+  color: rgb(156, 6, 6);
+}
+
+.p2-form {
+  color: rgb(231, 126, 5);
+  border: 2px solid rgb(76, 8, 187);
+}
+
+/* .form-check {
+  background: yellow;
+} */
+
+.form-group {
+  text-align: center;
+  /* background: brown; */
+  /* border: 2px solid rgb(1, 185, 231); */
 }
 
 .game-resolve {
@@ -46,50 +86,30 @@ body {
   margin-bottom: 50px;
   font-family: Helvetica;
   font-size: 50px;
-  order: 3;
-}
-
-.game-players {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
+  border: 1px solid #999;
   order: 4;
 }
 
-.game-info {
+/* .game-info {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 50px;
   order: 5;
-}
+} */
 
+/* 
 .player-column:after {
   clear: both;
   content: "";
   display: table;
-}
+} */
 
-.player {
-  background: #fff;
-  border: 1px solid #999;
-  float: left;
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 34px;
-  height: 34px;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
-  text-align: center;
-  width: 300px;
-}
-
-.player:focus {
+/* .player:focus {
   outline: none;
-}
+} */
 
-.player--winning {
+/* .player--winning {
   background: aqua;
   border: 1px solid #999;
   float: left;
@@ -102,23 +122,7 @@ body {
   padding: 0;
   text-align: center;
   width: 300px;
-}
-
-.form-check {
-  background: yellow;
-}
-
-.form-group {
-  background: brown;
-}
-
-.battle-resolve {
-  background: purple;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 50px;
-  order: 6;
+  border: 1px solid rgb(13, 131, 9);
 }
 
 .status {
@@ -130,7 +134,7 @@ body {
   flex-direction: column;
   align-items: center;
   order: 7;
-  /* when add width, also adds right-align */
-  /* width: 100px; */
-}
+  when add width, also adds right-align
+  width: 100px;
+} */
 

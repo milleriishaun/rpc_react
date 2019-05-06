@@ -29,8 +29,6 @@ class Menu extends React.Component {
     }
   }
 
-
-
   render() {
     return (
       <div className="whole-menu">
@@ -58,7 +56,7 @@ class Menu extends React.Component {
         </div>
 
         <div className="game-players">
-          <div>
+          <div className="p1">
             <Player
               name="p1"
               isSelectedCampaign={this.state.isSelectedCampaign}
@@ -117,7 +115,7 @@ class Menu extends React.Component {
             </form>
           </div>
 
-          <div>
+          <div className="p2">
             <Player
               name="p2"
               isSelectedCampaign={this.state.isSelectedCampaign}
@@ -184,7 +182,7 @@ class Menu extends React.Component {
 class Game extends React.Component {
   render() {
     return (
-      <div>
+      <div className="game">
         <div className="game-title">
           Rock, Paper, Scissors
         </div>
