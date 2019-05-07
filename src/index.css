@@ -41,16 +41,25 @@ body {
   border: 1px solid #999;
 }
 
+.players-turn {
+  border: 1px solid rgb(104, 148, 0);
+}
+
 .game-players {
   display: flex;
+  flex-direction: row;
   align-items: left;
   margin: 0px;
   padding: 20px;
-  flex-direction: row;
   border: 1px solid rgb(28, 211, 4);
 }
 
 .p1 {
+  display: flex;
+  flex-direction: column;
+}
+
+.p1-stats {
   color: blue;
 }
 
@@ -60,7 +69,16 @@ body {
 }
 
 .p2 {
+  display: flex;
+  flex-direction: column;
+}
+
+.p2-stats {
   color: rgb(156, 6, 6);
+}
+
+.player-stats {
+  color: pink;
 }
 
 .p2-form {
@@ -82,12 +100,24 @@ body {
   display: flex;
   flex-direction: row;
   align-items: left;
-  margin-right: 20px;
-  margin-bottom: 50px;
+  margin-right: 0px;
+  margin-bottom: 0px;
   font-family: Helvetica;
   font-size: 50px;
   border: 1px solid #999;
   order: 4;
+}
+
+.game-next {
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  font-family: Helvetica;
+  font-size: 50px;
+  border: 1px solid #999;
+  order: 5;
 }
 
 /* .game-info {
