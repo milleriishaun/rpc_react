@@ -79,6 +79,8 @@ body {
 
 .player-stats {
   color: pink;
+  display: flex;
+  flex-direction: row;
 }
 
 .p2-form {

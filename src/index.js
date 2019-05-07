@@ -4,23 +4,23 @@ import './index.css';
 
 function Next(props) {
   return (
-    <button onClick={props.handleClick}>
+    <button onClickNext={props.onClickNext}>
       Next
     </button>
   );
 }
 
 function Resolved(props) {
-  if (props.bothResolved) {
+  if (props.bothSelected) {
     return (
       <button disabled>
-        Resolve!
+        Resolve! {props.bothSelected}
       </button>
     );
   } else {
     return (
-      <button onResolve={(event) => this.handleResolve(event)}>
-        Resolve!
+      <button onClickResolve={props.onClickResolve}>
+        Resolve!{props.bothSelected}
       </button>
     );
   }
@@ -30,57 +30,21 @@ class Players extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showPlayer1: true,
-      showPlayer2: true,
-    }
+      selectedOption: "",
+    };
   }
 
-  handleFormChange1(event) {
+  handleOptionChange = e => {
     this.setState({
-      p1Choice: event.target.value,
+      selectedOption: e.target.value,
     });
-    event.preventDefault();
-  }
-
-  handleFormChange2(event) {
-    this.setState({
-      p2Choice: event.target.value,
-    });
-    event.preventDefault();
-  }
-
-  handleFormSubmit1(event) {
-    if (this.props.p1Choice !== "") {
-      this.setState({
-        bothSelected: !this.state.bothSelected,
-      });
-    } else {
-      this.setState({
-        showPlayer1: !this.showPlayer1,
-        p1Turn: !this.state.p1Turn,
-      });
-    }
-    event.preventDefault();
-  }
-
-  handleFormSubmit2(event) {
-    if (this.props.p1Choice !== "") {
-      this.setState({
-        bothSelected: !this.state.bothSelected,
-      });
-    } else {
-      this.setState({
-        showPlayer2: !this.state.showPlayer2,
-        p1Turn: !this.state.p1Turn,
-      });
-    }
-    event.preventDefault();
+    e.preventDefault();
   }
 
   renderPlayer1() {
     return (
       <div>
-        <h3 onSubmit={this.props.onSubmit}>
+        <h3 onSubmit1={(event) => this.props.onSubmit1(event)}>
           {this.props.p1Turn ? this.props.p1Choice : this.props.p2Choice}
         </h3>
 
@@ -91,8 +55,7 @@ class Players extends React.Component {
           </div>
           <div className="p1-form">
             <form
-              onChange={(event) => this.handleFormChange1(event)}
-              onSubmit={(event) => this.handleFormSubmit1(event)}>
+              onSubmit1={(event) => this.props.onSubmit1(event)}>
               <div className="form-check">
                 <label for="attack1" id="attack1_label">
                   <input type="radio" name="attack" value="attack1" checked={this.state.selectedOption === "attack1"} onChange={this.handleOptionChange} className="form-check-input" id="attack1"/>
@@ -147,7 +110,7 @@ class Players extends React.Component {
   renderPlayer2() {
     return (
       <div>
-        <h3 onSubmit={this.props.onSubmit}>
+        <h3 onSubmit2={(event) => this.props.onSubmit2(event)}>
           {this.props.p1Turn ? this.props.p1Choice : this.props.p2Choice}
         </h3>
 
@@ -158,8 +121,7 @@ class Players extends React.Component {
           </div>
           <div className="p2-form">
             <form
-              onChange={(event) => this.handleFormChange2(event)}
-              onSubmit={(event) => this.handleFormSubmit2(event)}>
+              onSubmit2={(event) => this.props.onSubmit2(event)}>
               <div className="form-check">
                 <label for="attack1" id="attack1_label">
                   <input type="radio" name="attack" value="attack1" checked={this.state.selectedOption === "attack1"} onChange={this.handleOptionChange} className="form-check-input" id="attack1"/>
@@ -208,20 +170,21 @@ class Players extends React.Component {
   }
 
   render() {
-    if (this.state.showPlayer1 && this.state.showPlayer2) {
+    if (this.props.showPlayer1 && this.props.showPlayer2) {
       return (
         <div className="player-stats">
+          {this.props.p1Choice}
           {this.renderPlayer1()}
           {this.renderPlayer2()}
         </div>
       );
-    } else if(!this.state.showPlayer1) {
+    } else if(!this.props.showPlayer1) {
       return (
         <div className="player-stats">
           {this.renderPlayer2()}
         </div>
       );
-    } else if(!this.state.showPlayer2) {
+    } else if(!this.props.showPlayer2) {
       return (
         <div className="player-stats">
           {this.renderPlayer1()}
@@ -237,23 +200,25 @@ class Menu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      showPlayer1: true,
+      showPlayer2: true,
       isReversed: false,
       p1Turn: true,
     };
   }
 
-  handleMenuChange(event) {
+  handleMenuChange = e => {
     this.setState({
-      isSelectedCampaign: event.target.value,
+      isSelectedCampaign: e.target.value,
     });
-    event.preventDefault();
+    e.preventDefault();
   }
 
-  handleMenuSubmit(event) {
+  handleMenuSubmit = e => {
     this.setState({
-      isSelectedCampaign: event.target.value,
+      isSelectedCampaign: e.target.value,
     });
-    event.preventDefault();
+    e.preventDefault();
   }
 
   render() {
@@ -263,12 +228,12 @@ class Menu extends React.Component {
       <div className="whole-menu">
         <div className="game-menu">
           <form
-            onSubmit={(event) => this.handleMenuSubmit(event)}>
+            onSubmit={this.handleMenuSubmit}>
             <label>
               Choose a new battle campaign!
               <select
                 value={this.props.isSelectedCampaign}
-                onChange={(event) => this.handleMenuChange(event)}
+                onChange={this.handleMenuChange}
                 id="menu"
               >
                 <option value="mage">Mage</option>
@@ -295,7 +260,9 @@ class Menu extends React.Component {
             p1HP={this.props.p1HP}
             p2HP={this.props.p2HP}
             p1WonBattle={this.props.p1WonBattle}
-            bothResolved={this.props.bothResolved}
+            bothSelected={this.props.bothSelected}
+            showPlayer1={this.state.showPlayer1}
+            showPlayer2={this.state.showPlayer2}
             isReversed={this.state.isReversed}
             p1Turn={this.state.p1Turn}
           />
@@ -314,42 +281,84 @@ class Game extends React.Component {
       p2Choice: "",
       p1HP: 500,
       p2HP: 500,
-      bothResolved: false,
+      bothSelected: false,
       p1WonBattle: false,
     };
   }
 
-  handleResolve(event) {
+  handleFormChange1 = e => {
+    this.setState({
+      p1Choice: e.target.value,
+    });
+    e.preventDefault();
+  }
+
+  handleFormChange2 = e => {
+    this.setState({
+      p2Choice: e.target.value,
+    });
+    e.preventDefault();
+  }
+
+  handleFormSubmit1 = e => {
+    if (this.props.p1Choice !== "") {
+      this.setState({
+        bothSelected: !this.state.bothSelected,
+      });
+    } else {
+      this.setState({
+        showPlayer1: !this.showPlayer1,
+        p1Turn: !this.state.p1Turn,
+      });
+    }
+    e.preventDefault();
+  }
+
+  handleFormSubmit2 = e => {
+    if (this.props.p1Choice !== "") {
+      this.setState({
+        bothSelected: !this.state.bothSelected,
+      });
+    } else {
+      this.setState({
+        showPlayer2: !this.state.showPlayer2,
+        p1Turn: !this.state.p1Turn,
+      });
+    }
+    e.preventDefault();
+  }
+
+  handleResolveClick = e => {
     const damage = calculateDamage(this.state.isSelectedCampaign, this.state.p1Choice, this.state.p2Choice);
     if (damage[1] > damage[2]) {
       this.setState({
         p2HP: this.state.p1HP - damage[0],
         p1WonBattle: true,
-        bothResolved: true,
+        bothSelected: true,
       });
     } else if (damage[1] < damage[2]) {
       this.setState({
         p1HP: this.state.p1HP - damage[0],
         p1WonBattle: false,
-        bothResolved: true,
+        bothSelected: true,
       });
     } else {
       this.setState({
-        bothResolved: true,
+        bothSelected: true,
       });
       alert('tie, press Next to battle again');
     }
-    event.preventDefault();
+    e.preventDefault();
   }
 
-  handleNextClick(event) {
+  handleNextClick = e => {
     this.setState({
       p1Choice: "",
       p2Choice: "",
       p1WonBattle: false,
-      bothResolved: false,
+      bothSelected: false,
     });
-    event.preventDefault();
+    e.preventDefault();
   }
 
   render() {
@@ -369,17 +378,22 @@ class Game extends React.Component {
             p2Choice={this.state.p2Choice}
             p1HP={this.state.p1HP}
             p2HP={this.state.p2HP}
-            bothResolved={this.state.bothResolved}
+            bothSelected={this.state.bothSelected}
             p1WonBattle={this.state.p1WonBattle}
+            onClick1={this.handleFormChange1}
+            onClick2={this.handleFormChange2}
+            onSubmit1={this.handleFormSubmit1}
+            onSubmit2={this.handleFormSubmit2}
           />
           <div className="game-resolve">
             <Resolved
-              bothResolved={this.state.bothResolved}
+              bothSelected={this.state.bothSelected}
+              onClickResolve={this.handleResolveClick}
             />
           </div>
           <div className="game-next">
             <Next
-              onClick={(event) => this.handleNextClick(event)}
+              onClickNext={this.handleNextClick}
             />
           </div>
         </div>
