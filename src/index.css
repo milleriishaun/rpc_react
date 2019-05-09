@@ -77,6 +77,14 @@ body {
   color: rgb(156, 6, 6);
 }
 
+.results {
+  text-align: center;
+  margin: 20px;
+  color: rgb(49, 49, 49);
+  font-family: Helvetica;
+  font-size: 30px;
+}
+
 .player-stats {
   color: pink;
   display: flex;
@@ -120,6 +128,14 @@ body {
   font-size: 50px;
   border: 1px solid #999;
   order: 5;
+}
+
+.victory {
+  text-align: center;
+  margin: 20px;
+  color: rgb(255, 177, 9);
+  font-family: Helvetica;
+  font-size: 50px;
 }
 
 /* .game-info {
