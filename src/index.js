@@ -296,10 +296,12 @@ class Menu extends React.Component {
     return (
       <div className="whole-menu">
         <div className="game-menu">
+          <div className="game-label">
+            Choose a new battle campaign!
+          </div>
           <form
             onSubmit={this.handleMenuSubmit}>
             <label>
-              Choose a new battle campaign!
               <select
                 value={isSelectedCampaign}
                 onChange={this.handleMenuChange}
