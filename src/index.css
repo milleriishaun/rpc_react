@@ -57,9 +57,10 @@ body {
 .p1 {
   display: flex;
   flex-direction: column;
+  margin-left: 20px;
 }
 
-.p1-stats {
+.p1-hp {
   color: blue;
 }
 
@@ -68,27 +69,55 @@ body {
   border: 2px solid rgb(76, 8, 187);
 }
 
+.p1-choice {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin-left: 50px;
+  color: rgb(31, 31, 31);
+  font-family: Helvetica;
+  font-size: 50px;
+}
+
 .p2 {
   display: flex;
   flex-direction: column;
+  margin-left: 20px;
 }
 
-.p2-stats {
+.p2-hp {
   color: rgb(156, 6, 6);
 }
 
-.results {
+.p2-form {
+  color: rgb(231, 126, 5);
+  border: 2px solid rgb(76, 8, 187);
+}
+
+.p2-choice {
+  display: flex;
+  flex-direction: column;
   text-align: center;
-  margin: 20px;
-  color: rgb(49, 49, 49);
+  margin-left: 50px;
+  color: rgb(31, 31, 31);
   font-family: Helvetica;
-  font-size: 30px;
+  font-size: 50px;
 }
 
 .player-stats {
   color: pink;
   display: flex;
   flex-direction: row;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin: 20px;
+  color: rgb(49, 49, 49);
+  font-family: Helvetica;
+  font-size: 30px;
 }
 
 .p2-form {

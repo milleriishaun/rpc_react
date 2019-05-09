@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+
 function Next(props) {
   return (
-    <button onClick={() => props.onClickNext()}>
+    <button onClick={props.onClickNext}>
       Next
     </button>
   );
@@ -12,7 +13,7 @@ function Next(props) {
 function Resolved(props) {
   if (props.showResolve) {
     return (
-      <button onClick={() => props.onClickResolve()}>
+      <button onClick={props.onClickResolve}>
         Resolve!
       </button>
     );
@@ -70,7 +71,7 @@ class Players extends React.Component {
         <button
           className="p1-submit"
           type="submit"
-          id="attackButton"
+          id="attackButton1"
         >
           Attack!
         </button>
@@ -78,9 +79,9 @@ class Players extends React.Component {
 
     return (
       <div className="p1">
-        <div className="p1-stats">
-          {p1HP}
-          {p1Choice}
+        <div className="p1-hp">
+          {'Player 1 HP: ' + p1HP}
+          <br/>
         </div>
         <div className="p1-form">
           <form
@@ -148,7 +149,7 @@ class Players extends React.Component {
         <button
           className="p2-submit"
           type="submit"
-          id="attackButton"
+          id="attackButton2"
         >
           Attack!
         </button>
@@ -156,9 +157,9 @@ class Players extends React.Component {
 
     return (
       <div className="p2">
-        <div className="p2-stats">
-          {p2HP}
-          {p2Choice}
+        <div className="p2-hp">
+          {'Player 2 HP: ' + p2HP}
+          <br/>
         </div>
         <div className="p2-form">
           <form
@@ -209,6 +210,9 @@ class Players extends React.Component {
   }
 
   render() {
+    const attackNames = this.props.attackNames;
+    const p1Choice = this.props.p1Choice;
+    const p2Choice = this.props.p2Choice;
     const showPlayer1 = this.props.showPlayer1;
     const showPlayer2 = this.props.showPlayer2;
 
@@ -216,12 +220,18 @@ class Players extends React.Component {
       return (
         <div className="player-stats">
           {this.renderPlayer2()}
+          <div className="p2-choice">
+            {attackNames[p2Choice[p2Choice.length - 1] - 1]}
+          </div>
         </div>
       );
     } else if(showPlayer1 && !showPlayer2) {
       return (
         <div className="player-stats">
           {this.renderPlayer1()}
+          <div className="p1-choice">
+            {attackNames[p1Choice[p1Choice.length - 1] - 1]}
+          </div>
         </div>
       );
     } else if(!showPlayer1 && !showPlayer2) {
@@ -232,7 +242,9 @@ class Players extends React.Component {
     } else {
       return (
         <div className="player-stats">
-          <div className="results">Results</div>
+          <div className="results">
+            Results
+          </div>
           {this.renderPlayer1()}
           {this.renderPlayer2()}
         </div>
@@ -266,6 +278,8 @@ class Menu extends React.Component {
     const p1HP = this.props.p1HP;
     const p2HP = this.props.p2HP;
     const bothSelected = this.props.bothSelected;
+    const resolvedBattle = this.props.resolvedBattle;
+    const resolvedText = this.props.resolvedText;
     const showResolve = this.props.showResolve;
     const p1WonBattle = this.props.p1WonBattle;
     const showPlayer1 = this.props.showPlayer1;
@@ -291,10 +305,10 @@ class Menu extends React.Component {
                 onChange={this.handleMenuChange}
                 id="menu"
               >
+                <option value="spock">Spock</option>
                 <option value="mage">Mage</option>
                 <option value="melee">Melee</option>
                 <option value="yolo">YOLO</option>
-                <option value="spock">Spock</option>
                 <option value="whale">Whale</option>
               </select>
             </label>
@@ -305,7 +319,11 @@ class Menu extends React.Component {
           </form>
         </div>
         <div className="players-turn">
-          {bothSelected ? 'Resolve battle?' : turnLog}
+          {resolvedText !== "" ? resolvedText
+            : resolvedBattle ? 'Next battle! Who will win the war?'
+            : bothSelected ? 'Resolve battle?'
+            : turnLog
+          }
         </div>
         <div className="game-players">
           <Players
@@ -337,13 +355,15 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isSelectedCampaign: "mage",
-      attackNames: ["Fire Ball!", "Lightning Bolt!", "Water Blast!", "Earth Stomp!", "Wind Gust!"],
+      isSelectedCampaign: "spock",
+      attackNames: ["Rock!", "Paper!", "Scissors!", "Spock!" , "Lizard!"],
       p1Choice: "",
       p2Choice: "",
       p1HP: 400,
       p2HP: 400,
       bothSelected: false,
+      resolvedBattle: false,
+      resolvedText: "",
       showResolve: false,
       p1WonBattle: false,
       showPlayer1: true,
@@ -422,34 +442,37 @@ class Game extends React.Component {
 
     let [damage, j, k] = calculateDamage(this.state.isSelectedCampaign, this.state.p1Choice, this.state.p2Choice);
 
-    if (((j > k) && (j % 2 !== 0)) || ((j < k) && (j % 2 === 0))) {
+    if (((j > k) && ((j + k) % 2 !== 0)) || ((j < k) && ((j + k) % 2 === 0))) {
       this.setState({
         p2HP: this.state.p2HP - damage,
         bothSelected: true,
+        resolvedBattle: true,
+        resolvedText: 'Player 2 took ' + damage + ' damage!',
         showResolve: false,
         p1WonBattle: true,
         showPlayer1: true,
         showPlayer2: true,
       });
-      alert('Player 2 took ' + damage + ' damage!');
-    } else if (((j > k) && (j % 2 === 0)) || ((j < k) && (j % 2 !== 0))) {
+    } else if (((j > k) && ((j + k) % 2 === 0)) || ((j < k) && ((j + k) % 2 !== 0))) {
       this.setState({
         p1HP: this.state.p1HP - damage,
         bothSelected: true,
+        resolvedBattle: true,
+        resolvedText: 'Player 1 took ' + damage + ' damage!',
         showResolve: false,
         p1WonBattle: false,
         showPlayer1: true,
         showPlayer2: true,
       });
-      alert('Player 1 took ' + damage + ' damage!');
     } else {
       this.setState({
         bothSelected: true,
+        resolvedBattle: true,
+        resolvedText: 'Tie! No player took damage! Press "Next" to battle again.',
         showResolve: false,
         showPlayer1: true,
         showPlayer2: true,
       });
-      alert('Tie! No player took damage! Press "Next" to battle again.');
     }
   }
 
@@ -458,12 +481,12 @@ class Game extends React.Component {
       p1Choice: "",
       p2Choice: "",
       p1WonBattle: false,
-      bothSelected: false, //unnecessary double surety
-      showResolve: false, //unnecessary double surety
+      bothSelected: false, //necessary, otherwise Attack button is still disabled b/s bothSelected still true.
+      resolvedBattle: false,
+      resolvedText: "",
       showPlayer1: true,
       showPlayer2: false,
     });
-    alert('Next battle! Who will win the war?');
   }
 
   render() {
@@ -474,6 +497,8 @@ class Game extends React.Component {
     const p1HP = this.state.p1HP;
     const p2HP = this.state.p2HP;
     const bothSelected = this.state.bothSelected;
+    const resolvedBattle = this.state.resolvedBattle;
+    const resolvedText = this.state.resolvedText;
     const showResolve = this.state.showResolve;
     const p1WonBattle = this.state.p1WonBattle;
     const showPlayer1 = this.state.showPlayer1;
@@ -482,7 +507,7 @@ class Game extends React.Component {
     const p1Turn = this.state.p1Turn;
 
     if (this.state.p1HP <= 0) {
-      alert('Player 2 has won the war!');
+      alert('Player 1 HP: ' + p1HP + '\nPlayer 2 HP: ' + p2HP + '.\n\nPlayer 2 has won the war!');
       return (
         <div className="victory">
           <img src="https://imgur.com/rPFz1Mk.gif" border="0" alt="Spongebob at the bubble bowl!"/>
@@ -490,7 +515,7 @@ class Game extends React.Component {
         </div>
       )
     } else if (this.state.p2HP <= 0) {
-      alert('Player 1 has won the war!');
+      alert('Player 1 HP: ' + p1HP + '\nPlayer 2 HP: ' + p2HP + '.\n\nPlayer 1 has won the war!');
       return (
         <div className="victory">
           <img src="https://imgur.com/H5Lm06M.gif" border="0" alt="Spongebob at the bubble bowl!"/>
@@ -511,6 +536,8 @@ class Game extends React.Component {
             p1HP={p1HP}
             p2HP={p2HP}
             bothSelected={bothSelected}
+            resolvedBattle={resolvedBattle}
+            resolvedText={resolvedText}
             p1WonBattle={p1WonBattle}
             showPlayer1={showPlayer1}
             showPlayer2={showPlayer2}
@@ -528,6 +555,8 @@ class Game extends React.Component {
           <div className="game-resolve">
             <Resolved
               bothSelected={bothSelected}
+              resolvedBattle={resolvedBattle}
+              resolvedText={resolvedText}
               showResolve={showResolve}
               onClickResolve={this.handleResolveClickParent}
             />
@@ -550,7 +579,7 @@ ReactDOM.render(
 
 function calculateDamage(isSelectedCampaign, p1Choice, p2Choice) {
 
-  let campaignStats = ["mage", "melee", "yolo", "spock", "whale"];
+  let campaignStats = ["spock", "mage", "melee", "yolo", "whale"];
   let attacks = ["attack1", "attack2", "attack3", "attack4", "attack5"];
   let indexOfP1Choice = attacks.indexOf(p1Choice);
   let indexOfP2Choice = attacks.indexOf(p2Choice);
@@ -560,6 +589,22 @@ function calculateDamage(isSelectedCampaign, p1Choice, p2Choice) {
     for (let i in campaignStats) {
       if (isSelectedCampaign === campaignStats[i]) {
         switch (campaignStats[i]) {
+          case "spock":
+            damageArr = [
+              [0, 100, 200, 200, 100],
+              [100, 0, 100, 200, 200],
+              [200, 100, 0, 100, 200],
+              [200, 200, 100, 0, 100],
+              [100, 200, 200, 100, 0],
+            ];
+            for (let j = 0; j < damageArr.length; j++) {
+              for (let k = 0; k < damageArr.length; k++) {
+                if (indexOfP1Choice === j && indexOfP2Choice === k) {
+                  return [damageArr[j][k], j, k];
+                }
+              }
+            }
+          break;
           case "mage":
             damageArr = [
               [0, 100, 200, 200, 100],
@@ -608,22 +653,6 @@ function calculateDamage(isSelectedCampaign, p1Choice, p2Choice) {
               }
             }
             break;
-          case "spock":
-            damageArr = [
-              [0, 100, 200, 200, 100],
-              [100, 0, 100, 200, 200],
-              [200, 100, 0, 100, 200],
-              [200, 200, 100, 0, 100],
-              [100, 200, 200, 100, 0],
-            ];
-            for (let j = 0; j < damageArr.length; j++) {
-              for (let k = 0; k < damageArr.length; k++) {
-                if (indexOfP1Choice === j && indexOfP2Choice === k) {
-                  return [damageArr[j][k], j, k];
-                }
-              }
-            }
-            break;
           case "whale":
             damageArr = [
               [0, 100, 200, 200, 100],
@@ -654,10 +683,10 @@ function calculateDamage(isSelectedCampaign, p1Choice, p2Choice) {
 function getAtkNames(isSelectedCampaign1) {
   let campaignStats = ["mage", "melee", "yolo", "spock", "whale"];
   let gestures = [
+    ["Rock!", "Paper!", "Scissors!", "Spock!" , "Lizard!"],
     ["Fire Ball!", "Lightning Bolt!", "Water Blast!", "Earth Stomp!", "Wind Gust!"],
     ["Charge!", "Slash!", "Riposte!", "Deflect!" , "Lunge!"],
     ["Jeep!", "Bomber!", "Fighter!", "Tank!" , "Helo!"],
-    ["Rock!", "Paper!", "Scissors!", "Spock!" , "Lizard!"],
     ["Whale!", "Orca!", "Minnows!", "Dolphins!" , "Plankton!"],
   ];
   let atkNames1;
