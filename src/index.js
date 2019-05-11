@@ -1,32 +1,43 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-function Next(props) {
-  return (
-    <button onClick={props.onClickNext}>
-      Next
+const User = ({ user }) => (
+  <Profile user={user}>
+    <AvatarRound user={user} />
+  </Profile>
+);
+
+const Profile = ({ user, children }) => (
+  <div className="profile">
+    <div>{children}</div>
+    <div>
+      <p>{user.name}</p>
+    </div>
+  </div>
+);
+
+const AvatarRound = ({ user }) => (
+  <img className="round" alt="avatar" src={user.avatarUrl} />
+);
+
+const Next = ({ onClickNext }) =>
+  <button onClick={onClickNext}>
+    Next
+  </button>;
+
+const Resolved = ({ showResolve, onClickResolve }) =>
+  showResolve ?
+    <button onClick={onClickResolve}>
+      Resolve!
     </button>
-  );
-}
+    :
+    <button disabled>
+      Resolve!
+    </button>;
 
-function Resolved(props) {
-  if (props.showResolve) {
-    return (
-      <button onClick={props.onClickResolve}>
-        Resolve!
-      </button>
-    );
-  } else {
-    return (
-      <button disabled>
-        Resolve!
-      </button>
-    );
-  }
-}
 
-class Players extends React.Component {
+class Players extends Component {
   constructor(props) {
     super(props);
     this.handleFormChange1 = this.handleFormChange1.bind(this);
@@ -54,14 +65,16 @@ class Players extends React.Component {
   }
 
   renderPlayer1() {
-    const attackNames = this.props.attackNames;
-    const p1Choice = this.props.p1Choice;
-    const p1HP = this.props.p1HP;
-    const bothSelected = this.props.bothSelected;
+    const {
+      attackNames,
+      p1Choice,
+      p1HP,
+      bothSelected,
+    } = this.props;
 
     let atkBtn;
 
-    if (bothSelected) {
+    if (p1Choice === "" || bothSelected) {
       atkBtn =
         <button disabled>
           Attack!
@@ -132,14 +145,16 @@ class Players extends React.Component {
   }
 
   renderPlayer2() {
-    const attackNames = this.props.attackNames;
-    const p2Choice = this.props.p2Choice;
-    const p2HP = this.props.p2HP;
-    const bothSelected = this.props.bothSelected;
+    const {
+      attackNames,
+      p2Choice,
+      p2HP,
+      bothSelected,
+    } = this.props;
 
     let atkBtn;
 
-    if (bothSelected) {
+    if (p2Choice === "" || bothSelected) {
       atkBtn =
         <button disabled>
           Attack!
@@ -210,11 +225,13 @@ class Players extends React.Component {
   }
 
   render() {
-    const attackNames = this.props.attackNames;
-    const p1Choice = this.props.p1Choice;
-    const p2Choice = this.props.p2Choice;
-    const showPlayer1 = this.props.showPlayer1;
-    const showPlayer2 = this.props.showPlayer2;
+    const {
+      attackNames,
+      p1Choice,
+      p2Choice,
+      showPlayer1,
+      showPlayer2,
+    } = this.props;
 
     if(!showPlayer1 && showPlayer2) {
       return (
@@ -253,13 +270,12 @@ class Players extends React.Component {
   }
 }
 
-class Menu extends React.Component {
+class Menu extends Component {
   constructor(props) {
     super(props);
     this.handleMenuChange = this.handleMenuChange.bind(this);
     this.handleMenuSubmit = this.handleMenuSubmit.bind(this);
   }
-
 
   handleMenuChange(e) {
     this.props.onMenuChange(e.target.value);
@@ -271,25 +287,27 @@ class Menu extends React.Component {
   }
 
   render() {
-    const isSelectedCampaign = this.props.isSelectedCampaign;
-    const attackNames = this.props.attackNames;
-    const p1Choice = this.props.p1Choice;
-    const p2Choice = this.props.p2Choice;
-    const p1HP = this.props.p1HP;
-    const p2HP = this.props.p2HP;
-    const bothSelected = this.props.bothSelected;
-    const resolvedBattle = this.props.resolvedBattle;
-    const resolvedText = this.props.resolvedText;
-    const showResolve = this.props.showResolve;
-    const p1WonBattle = this.props.p1WonBattle;
-    const showPlayer1 = this.props.showPlayer1;
-    const showPlayer2 = this.props.showPlayer2;
-    const isReversed = this.props.isReversed;
-    const p1Turn = this.props.p1Turn;
-    const onFormChange1 = this.props.onFormChange1;
-    const onFormChange2 = this.props.onFormChange2;
-    const onFormSubmit1 = this.props.onFormSubmit1;
-    const onFormSubmit2 = this.props.onFormSubmit2;
+    const {
+      isSelectedCampaign,
+      attackNames,
+      p1Choice,
+      p2Choice,
+      p1HP,
+      p2HP,
+      bothSelected,
+      resolvedBattle,
+      resolvedText,
+      showResolve,
+      p1WonBattle,
+      showPlayer1,
+      showPlayer2,
+      isReversed,
+      p1Turn,
+      onFormChange1,
+      onFormChange2,
+      onFormSubmit1,
+      onFormSubmit2,
+    } = this.props;
 
     let turnLog = "It is " + (p1Turn ? "Player 1" : "Player 2") + "'s turn";
 
@@ -353,12 +371,19 @@ class Menu extends React.Component {
   }
 }
 
-class Game extends React.Component {
+class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isSelectedCampaign: "spock",
       attackNames: ["Rock!", "Paper!", "Scissors!", "Spock!" , "Lizard!"],
+      user: {
+        name: "",
+        avatarURL: "",
+        choice: "",
+        HP: 400,
+        showPlayer: true,
+      },
       p1Choice: "",
       p2Choice: "",
       p1HP: 400,
@@ -403,6 +428,7 @@ class Game extends React.Component {
       p1HP: 500,
       p2HP: 500,
     });
+    // e.preventDefault();
     // // This works, but using the const doesn't work like in handleMenuChangeParent
     // // I guess I don't need to pass in the const for Submit
     // alert('submitted, this.state.p1HP: ' + this.state.p1HP + ', this.state.p2HP: ' + this.state.p2HP);
@@ -483,7 +509,7 @@ class Game extends React.Component {
       p1Choice: "",
       p2Choice: "",
       p1WonBattle: false,
-      bothSelected: false, //necessary, otherwise Attack button is still disabled b/s bothSelected still true.
+      bothSelected: false, //necessary, otherwise Attack button is still disabled b/c bothSelected still true.
       resolvedBattle: false,
       resolvedText: "",
       showPlayer1: true,
@@ -492,21 +518,23 @@ class Game extends React.Component {
   }
 
   render() {
-    const isSelectedCampaign = this.state.isSelectedCampaign;
-    const attackNames = this.state.attackNames;
-    const p1Choice = this.state.p1Choice;
-    const p2Choice = this.state.p2Choice;
-    const p1HP = this.state.p1HP;
-    const p2HP = this.state.p2HP;
-    const bothSelected = this.state.bothSelected;
-    const resolvedBattle = this.state.resolvedBattle;
-    const resolvedText = this.state.resolvedText;
-    const showResolve = this.state.showResolve;
-    const p1WonBattle = this.state.p1WonBattle;
-    const showPlayer1 = this.state.showPlayer1;
-    const showPlayer2 = this.state.showPlayer2;
-    const isReversed = this.state.isReversed;
-    const p1Turn = this.state.p1Turn;
+    const {
+      isSelectedCampaign,
+      attackNames,
+      p1Choice,
+      p2Choice,
+      p1HP,
+      p2HP,
+      bothSelected,
+      resolvedBattle,
+      resolvedText,
+      showResolve,
+      p1WonBattle,
+      showPlayer1,
+      showPlayer2,
+      isReversed,
+      p1Turn,
+    } = this.state;
 
     if (this.state.p1HP <= 0) {
       alert('Player 1 HP: ' + p1HP + '\nPlayer 2 HP: ' + p2HP + '.\n\nPlayer 2 has won the war!');
@@ -556,9 +584,6 @@ class Game extends React.Component {
           />
           <div className="game-resolve">
             <Resolved
-              bothSelected={bothSelected}
-              resolvedBattle={resolvedBattle}
-              resolvedText={resolvedText}
               showResolve={showResolve}
               onClickResolve={this.handleResolveClickParent}
             />
