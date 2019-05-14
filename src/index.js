@@ -2,25 +2,6 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const User = ({ user }) => (
-  <Profile user={user}>
-    <AvatarRound user={user} />
-  </Profile>
-);
-
-const Profile = ({ user, children }) => (
-  <div className="profile">
-    <div>{children}</div>
-    <div>
-      <p>{user.name}</p>
-    </div>
-  </div>
-);
-
-const AvatarRound = ({ user }) => (
-  <img className="round" alt="avatar" src={user.avatarUrl} />
-);
-
 const Next = ({ onClickNext }) =>
   <button onClick={onClickNext}>
     Next
@@ -36,58 +17,100 @@ const Resolved = ({ showResolve, onClickResolve }) =>
       Resolve!
     </button>;
 
+const AvatarRound = ({ user }) => (
+  <img className="round" alt="avatar" src={user.avatarUrl} />
+);
+
+const Profile = ({ user, children }) => (
+  <div className="profile">
+    <div>{children}</div>
+    <div>
+      <p>{user}</p>
+    </div>
+  </div>
+);
+
+const User = ({ user }) => (
+  <Profile user={user}>
+    <AvatarRound user={user} />
+  </Profile>
+);
+
 class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isSelectedCampaign: "spock",
-      attackNames: ["Rock!", "Paper!", "Scissors!", "Spock!" , "Lizard!"],
+      isSelectedCampaign: "",
+      attackNames: ["blank", "blank", "blank", "blank" , "blank"],
       users: {
         player1: {
-          name: "Unknown Player",
+          name: "player1",
           avatarURL: "http://i65.tinypic.com/1zwypw7.jpg",
           choice: "",
           HP: 400,
           showPlayer: true,
         },
         player2: {
-          name: "Unknown Player",
+          name: "player2",
           avatarURL: "http://i65.tinypic.com/1zwypw7.jpg",
           choice: "",
           HP: 400,
           showPlayer: true,
         },
       },
-      p1Choice: "",
-      p2Choice: "",
-      p1HP: 400,
-      p2HP: 400,
-      showPlayer1: true,
-      showPlayer2: false,
       bothSelected: false,
       resolvedBattle: false,
       resolvedText: "",
       showResolve: false,
       p1WonBattle: false,
       p1Turn: true,
+      showNext: false;
     };
-    this.handleMenuChange = this.handleMenuChange.bind(this);
-    this.handleMenuSubmit = this.handleMenuSubmit.bind(this);
-    this.handleFormChange1 = this.handleFormChange1.bind(this);
-    this.handleFormChange2 = this.handleFormChange2.bind(this);
-    this.handleFormSubmit1 = this.handleFormSubmit1.bind(this);
-    this.handleFormSubmit2 = this.handleFormSubmit2.bind(this);
-    this.handleMenuChangeParent = this.handleMenuChangeParent.bind(this);
-    this.handleMenuSubmitParent = this.handleMenuSubmitParent.bind(this);
-    this.handleFormChange1Parent = this.handleFormChange1Parent.bind(this);
-    this.handleFormChange2Parent = this.handleFormChange2Parent.bind(this);
-    this.handleFormSubmit1Parent = this.handleFormSubmit1Parent.bind(this);
-    this.handleFormSubmit2Parent = this.handleFormSubmit2Parent.bind(this);
-    this.handleResolveClickParent = this.handleResolveClickParent.bind(this);
-    this.handleNextClickParent = this.handleNextClickParent.bind(this);
+    this.handleChangeMenu = this.handleChangeMenu.bind(this);
+    this.handleSubmitMenu = this.handleSubmitMenu.bind(this);
+    this.handleChangeForm = this.handleChangeForm.bind(this);
+    this.handleSubmitForm = this.handleSubmitForm.bind(this);
+    this.handleClickResolve = this.handleClickResolve.bind(this);
+    this.handleClickNext = this.handleClickNext.bind(this);
   }
 
-  handleMenuChange(e) {
+  // handleFormChange1(e) {
+  //   // this.props.onFormChange1(e.target.value);
+  // }
+
+  // handleFormChange2(e) {
+  //   // this.props.onFormChange2(e.target.value);
+  // }
+
+  // handleFormSubmit1(e) {
+  //   // this.props.onFormSubmit1(e.target.value);
+  //   // e.preventDefault();
+  // }
+
+  // handleFormSubmit2(e) {
+  //   // this.props.onFormSubmit2(e.target.value);
+  //   // e.preventDefault();
+  // }
+
+  // handleMenuChangeParent(isSelectedCampaign) {
+
+  //   // // this shows up to date info; 'spock'
+  //   // alert('changed, isSelectedCampaign from const: ' + isSelectedCampaign);
+  //   // // this brought up to date info, so it is a good sign
+  //   // alert('up to date?, this.state.p1HP: ' + this.state.p1HP + ', this.state.p2HP: ' + this.state.p2HP);
+  // }
+
+  // handleMenuSubmitParent() {
+
+  //   // e.preventDefault();
+  //   // // This works, but using the const doesn't work like in handleMenuChangeParent
+  //   // // I guess I don't need to pass in the const for Submit
+  //   // alert('submitted, this.state.p1HP: ' + this.state.p1HP + ', this.state.p2HP: ' + this.state.p2HP);
+  //   // // This was memorized, so it is a good sign
+  //   // alert('test if memorized: ' + this.state.isSelectedCampaign);
+  // }
+
+  handleChangMenu(e) {
     let atkNames = getAtkNames(e.target.value);
 
     this.setState({
@@ -96,150 +119,150 @@ class Game extends Component {
     });
   }
 
-  handleMenuSubmit(e) {
+  handleSubmitMenu(e, name1, name2) {
     this.setState({
       isSelectedCampaign: this.state.isSelectedCampaign,
       attackNames: this.state.attackNames,
       users: {
-        player1: {
+        [name1]: {
           HP: 500,
         },
-        player2: {
+      }
+      users: {
+        [name2]: {
           HP: 500,
-        }
+        },
       }
     });
     e.preventDefault();
   }
 
-  handleFormChange1(e) {
-    this.props.onFormChange1(e.target.value);
-  }
-
-  handleFormChange2(e) {
-    this.props.onFormChange2(e.target.value);
-  }
-
-  handleFormSubmit1(e) {
-    this.props.onFormSubmit1(e.target.value);
-    e.preventDefault();
-  }
-
-  handleFormSubmit2(e) {
-    this.props.onFormSubmit2(e.target.value);
-    e.preventDefault();
-  }
-
-  handleMenuChangeParent(isSelectedCampaign) {
-
-    // // this shows up to date info; 'spock'
-    // alert('changed, isSelectedCampaign from const: ' + isSelectedCampaign);
-    // // this brought up to date info, so it is a good sign
-    // alert('up to date?, this.state.p1HP: ' + this.state.p1HP + ', this.state.p2HP: ' + this.state.p2HP);
-  }
-
-  handleMenuSubmitParent() {
-
-    // e.preventDefault();
-    // // This works, but using the const doesn't work like in handleMenuChangeParent
-    // // I guess I don't need to pass in the const for Submit
-    // alert('submitted, this.state.p1HP: ' + this.state.p1HP + ', this.state.p2HP: ' + this.state.p2HP);
-    // // This was memorized, so it is a good sign
-    // alert('test if memorized: ' + this.state.isSelectedCampaign);
-  }
-
-  handleFormChange1Parent(p1Choice) {
+  handleChangeForm(name, choice) {
     this.setState({
-      p1Choice: p1Choice,
+      users: {
+        [name]: {
+          choice: choice,
+        }
+      }
     });
   }
 
-  handleFormChange2Parent(p2Choice) {
+  handleSubmitForm(name) {
     this.setState({
-      p2Choice: p2Choice,
-    });
-  }
-
-  handleFormSubmit1Parent() {
-    this.setState({
-      showPlayer1: !this.state.showPlayer1,
-      showPlayer2: !this.state.showPlayer2,
+      users: {
+        [name]: {
+          showPlayer: !this.state.users[name].showPlayer,
+        },
+      },
       p1Turn: !this.state.p1Turn,
     });
+
+    //temporary conditional
+    if (name === 'player2') {
+      this.setState({
+        users: {
+          [name]: {
+            showPlayer: !this.state.users[name].showPlayer,
+          },
+        },
+        p1Turn: !this.state.p1Turn,
+        bothSelected: true,
+        showResolve: true,
+      });
+    }
   }
 
+  handleClickResolve(name1, name2) {
 
-  handleFormSubmit2Parent() {
-    this.setState({
-      showPlayer2: !this.state.showPlayer2,
-      p1Turn: !this.state.p1Turn,
-      bothSelected: true,
-      showResolve: true,
-    });
-  }
-
-  handleResolveClickParent() {
-
-    let [damage, j, k] = calculateDamage(this.state.isSelectedCampaign, this.state.p1Choice, this.state.p2Choice);
+    let [damage, j, k] = calculateDamage(this.state.isSelectedCampaign, this.state.users[name1].choice, this.state.users[name1].choice);
 
     if (((j > k) && ((j + k) % 2 !== 0)) || ((j < k) && ((j + k) % 2 === 0))) {
       this.setState({
-        p2HP: this.state.p2HP - damage,
+        users: {
+          [name1]: {
+            HP: !this.state.users[name1].HP - damage,
+            showPlayer: true,
+          },
+        },
         bothSelected: true,
         resolvedBattle: true,
         resolvedText: 'Player 2 took ' + damage + ' damage!',
         showResolve: false,
         p1WonBattle: true,
-        showPlayer1: true,
-        showPlayer2: true,
+        showNext: true,
       });
     } else if (((j > k) && ((j + k) % 2 === 0)) || ((j < k) && ((j + k) % 2 !== 0))) {
       this.setState({
-        p1HP: this.state.p1HP - damage,
+        users: {
+          [name2]: {
+            HP: !this.state.users[name2].HP - damage,
+            showPlayer: true,
+          },
+        },
         bothSelected: true,
         resolvedBattle: true,
         resolvedText: 'Player 1 took ' + damage + ' damage!',
         showResolve: false,
-        p1WonBattle: false,
-        showPlayer1: true,
-        showPlayer2: true,
+        p1WonBattle: true,
+        showNext: true,
       });
     } else {
       this.setState({
+        users: {
+          [name1]: {
+            showPlayer: true,
+          },
+        },
+        users: {
+          [name2]: {
+            showPlayer: true,
+          },
+        },
         bothSelected: true,
         resolvedBattle: true,
         resolvedText: 'Tie! No player took damage! Press "Next" to battle again.',
         showResolve: false,
-        showPlayer1: true,
-        showPlayer2: true,
+        showNext: true,
       });
     }
   }
 
-  handleNextClickParent() {
+  handleClickNext(name1, name2) {
     this.setState({
-      p1Choice: "",
-      p2Choice: "",
+      users: {
+        [name1]: {
+          choice: "",
+          showPlayer: true,
+        },
+      },
+      users: {
+        [name2]: {
+          choice: "",
+          showPlayer: false,
+        },
+      },
       p1WonBattle: false,
       bothSelected: false, //necessary, otherwise Attack button is still disabled b/c bothSelected still true.
       resolvedBattle: false,
       resolvedText: "",
-      showPlayer1: true,
-      showPlayer2: false,
+      showNext: false,
     });
   }
 
-  renderPlayer1() {
+  renderPlayer(name) {
+
     const {
       attackNames,
-      p1Choice,
-      p1HP,
+      users,
+      users[name],
+      users[name][choice],
+      users[name][HP],
       bothSelected,
     } = this.state;
 
     let atkBtn;
 
-    if (p1Choice === "" || bothSelected) {
+    if (users[name][choice] === "" || bothSelected) {
       atkBtn =
         <button disabled>
           Attack!
@@ -247,140 +270,62 @@ class Game extends Component {
     } else {
       atkBtn =
         <button
-          className="p1-submit"
+          className="p-form-submit"
           type="submit"
-          id="attackButton1"
         >
           Attack!
         </button>
     }
 
     return (
-      <div className="p1">
-        <div className="p1-hp">
-          {'Player 1 HP: ' + p1HP}
+      <div className="player">
+        <div className="p-profile">
+          <User user={users[name]}>
+        </div>
+        <div className="p-hp">
+          {users[name] + ' HP: ' + users[name][HP]}
           <br/>
         </div>
-        <div className="p1-form">
+        <div className="p-form">
           <form
-            onSubmit={this.handleFormSubmit1}
+            onSubmit={this.handleSubmitForm}
           >
-            <div className="form-check">
+            <div className="p-form-check">
               <label for="attack1" id="attack1_label">
-                <input type="radio" name="attack" value="attack1" checked={p1Choice === 'attack1'} onChange={this.handleFormChange1} className="form-check-input" id="attack1"/>
+                <input type="radio" name="attack" value="attack1" checked={users[name][choice] === 'attack1'} onChange={this.handleChangeForm} className="p-form-check-input" id="attack1"/>
                 {attackNames[0]}
               </label>
               <br/>
             </div>
-            <div className="form-check">
+            <div className="p-form-check">
               <label for="attack2" id="attack2_label">
-                <input type="radio" name="attack" value="attack2" checked={p1Choice === 'attack2'} onChange={this.handleFormChange1} className="form-check-input" id="attack2"/>
+                <input type="radio" name="attack" value="attack2" checked={users[name][choice] === 'attack2'} onChange={this.handleChangeForm} className="p-form-check-input" id="attack2"/>
                 {attackNames[1]}
               </label>
               <br/>
             </div>
-            <div className="form-check">
+            <div className="p-form-check">
               <label for="attack3" id="attack3_label">
-                <input type="radio" name="attack" value="attack3" checked={p1Choice === 'attack3'} onChange={this.handleFormChange1} className="form-check-input" id="attack3"/>
+                <input type="radio" name="attack" value="attack3" checked={users[name][choice] === 'attack3'} onChange={this.handleChangeForm} className="p-form-check-input" id="attack3"/>
                 {attackNames[2]}
               </label>
               <br/>
             </div>
-            <div className="form-check">
+            <div className="p-form-check">
               <label for="attack4" id="attack4_label">
-                <input type="radio" name="attack" value="attack4" checked={p1Choice === 'attack4'} onChange={this.handleFormChange1} className="form-check-input" id="attack4"/>
+                <input type="radio" name="attack" value="attack4" checked={users[name][choice] === 'attack4'} onChange={this.handleChangeForm} className="p-form-check-input" id="attack4"/>
                 {attackNames[3]}
               </label>
               <br/>
             </div>
-            <div className="form-check">
+            <div className="p-form-check">
               <label for="attack5" id="attack5_label">
-                <input type="radio" name="attack" value="attack5" checked={p1Choice === 'attack5'} onChange={this.handleFormChange1} className="form-check-input" id="attack5"/>
+                <input type="radio" name="attack" value="attack5" checked={users[name][choice] === 'attack5'} onChange={this.handleChangeForm} className="p-form-check-input" id="attack5"/>
                 {attackNames[4]}
               </label>
               <br/>
             </div>
-            <div className="form-group">
-              {atkBtn}
-            </div>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  renderPlayer2() {
-    const {
-      attackNames,
-      p2Choice,
-      p2HP,
-      bothSelected,
-    } = this.state;
-
-    let atkBtn;
-
-    if (p2Choice === "" || bothSelected) {
-      atkBtn =
-        <button disabled>
-          Attack!
-        </button>
-    } else {
-      atkBtn =
-        <button
-          className="p2-submit"
-          type="submit"
-          id="attackButton2"
-        >
-          Attack!
-        </button>
-    }
-
-    return (
-      <div className="p2">
-        <div className="p2-hp">
-          {'Player 2 HP: ' + p2HP}
-          <br/>
-        </div>
-        <div className="p2-form">
-          <form
-            onSubmit={this.handleFormSubmit2}
-          >
-            <div className="form-check">
-              <label for="attack1" id="attack1_label">
-                <input type="radio" name="attack" value="attack1" checked={p2Choice === 'attack1'} onChange={this.handleFormChange2} className="form-check-input" id="attack1"/>
-                {attackNames[0]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-check">
-              <label for="attack2" id="attack2_label">
-                <input type="radio" name="attack" value="attack2" checked={p2Choice === 'attack2'} onChange={this.handleFormChange2} className="form-check-input" id="attack2"/>
-                {attackNames[1]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-check">
-              <label for="attack3" id="attack3_label">
-                <input type="radio" name="attack" value="attack3" checked={p2Choice === 'attack3'} onChange={this.handleFormChange2} className="form-check-input" id="attack3"/>
-                {attackNames[2]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-check">
-              <label for="attack4" id="attack4_label">
-                <input type="radio" name="attack" value="attack4" checked={p2Choice === 'attack4'} onChange={this.handleFormChange2} className="form-check-input" id="attack4"/>
-                {attackNames[3]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-check">
-              <label for="attack5" id="attack5_label">
-                <input type="radio" name="attack" value="attack5" checked={p2Choice === 'attack5'} onChange={this.handleFormChange2} className="form-check-input" id="attack5"/>
-                {attackNames[4]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-group">
+            <div className="p-form-group">
               {atkBtn}
             </div>
           </form>
@@ -393,22 +338,21 @@ class Game extends Component {
     const {
       isSelectedCampaign,
       attackNames,
-      p1Choice,
-      p2Choice,
-      p1HP,
-      p2HP,
+      users,
+      users[name1],
+      users[name1][choice],
+      users[name1][HP],
+      users[name1][showPlayer],
+      users[name2],
+      users[name2][choice],
+      users[name2][HP],
+      users[name2][showPlayer],
       bothSelected,
       resolvedBattle,
       resolvedText,
       showResolve,
       p1WonBattle,
-      showPlayer1,
-      showPlayer2,
       p1Turn,
-      onFormChange1,
-      onFormChange2,
-      onFormSubmit1,
-      onFormSubmit2,
     } = this.state;
 
     let turnLog = "It is " + (p1Turn ? "Player 1" : "Player 2") + "'s turn";
@@ -417,18 +361,18 @@ class Game extends Component {
     let showStatus;
     let showPlayers;
 
-    if (isSelectedCampaign) {
+    if (!isSelectedCampaign) {
       showMenu = (
         <div className="game-menu">
           <div className="game-label">
             Choose a new battle campaign!
           </div>
           <form
-            onSubmit={this.handleMenuSubmit}>
+            onSubmit={this.handleSubmitMenu}>
             <label>
               <select
                 value={isSelectedCampaign}
-                onChange={this.handleMenuChange}
+                onChange={this.handleChangeMenu}
                 id="menu"
               >
                 <option value="spock">Spock</option>
@@ -443,6 +387,60 @@ class Game extends Component {
               value="Submit"
             />
           </form>
+        </div>
+      );
+    }
+
+    if (users[name1][HP] <= 0) {
+      alert('Player 1 HP: ' + p1HP + '\nPlayer 2 HP: ' + p2HP + '.\n\nPlayer 2 has won the war!');
+      pWin = (
+        <div className="victory">
+          <img src="https://imgur.com/rPFz1Mk.gif" border="0" alt="Spongebob at the bubble bowl!"/>
+          <h1>Player 2 has won sweet victory!</h1>
+        </div>
+      );
+    } else if (users[name2][HP] <= 0) {
+      alert('Player 1 HP: ' + p1HP + '\nPlayer 2 HP: ' + p2HP + '.\n\nPlayer 1 has won the war!');
+      pWin = (
+        <div className="victory">
+          <img src="https://imgur.com/H5Lm06M.gif" border="0" alt="Spongebob at the bubble bowl!"/>
+          <h1>Player 1 has won sweet victory!</h1>
+        </div>
+      );
+    }
+
+
+    if(!users[name1][showPlayer] && users[name2][showPlayer]) {
+      showPlayers = (
+        <div className="player-stats">
+          {this.renderPlayer(name2)}
+          <div className="p-choice">
+            {attackNames[(users[name2][choice][ users[name2][choice].length - 1 ]) - 1]}
+          </div>
+        </div>
+      );
+    } else if(users[name1][showPlayer] && !users[name2][showPlayer]) {
+      showPlayers = (
+        <div className="player-stats">
+          {this.renderPlayer(name1)}
+          <div className="p-choice">
+            {attackNames[(users[name1][choice][ users[name1][choice].length - 1 ]) - 1]}
+          </div>
+        </div>
+      );
+    } else if(!users[name1][showPlayer] && !users[name2][showPlayer]) {
+      showPlayers = (
+        <div className="player-stats">
+        </div>
+      );
+    } else {
+      showPlayers = (
+        <div className="player-stats">
+          <div className="results">
+            Results
+          </div>
+          {this.renderPlayer(name1)}
+          {this.renderPlayer(name2)}
         </div>
       );
     }
@@ -462,59 +460,6 @@ class Game extends Component {
     //           : turnLog
     // )
 
-    if(!showPlayer1 && showPlayer2) {
-      showPlayers = (
-        <div className="player-stats">
-          {this.renderPlayer2()}
-          <div className="p2-choice">
-            {attackNames[p2Choice[p2Choice.length - 1] - 1]}
-          </div>
-        </div>
-      );
-    } else if(showPlayer1 && !showPlayer2) {
-      showPlayers = (
-        <div className="player-stats">
-          {this.renderPlayer1()}
-          <div className="p1-choice">
-            {attackNames[p1Choice[p1Choice.length - 1] - 1]}
-          </div>
-        </div>
-      );
-    } else if(!showPlayer1 && !showPlayer2) {
-      showPlayers = (
-        <div className="player-stats">
-        </div>
-      );
-    } else {
-      showPlayers = (
-        <div className="player-stats">
-          <div className="results">
-            Results
-          </div>
-          {this.renderPlayer1()}
-          {this.renderPlayer2()}
-        </div>
-      );
-    }
-
-    if (this.state.p1HP <= 0) {
-      alert('Player 1 HP: ' + p1HP + '\nPlayer 2 HP: ' + p2HP + '.\n\nPlayer 2 has won the war!');
-      pWin = (
-        <div className="victory">
-          <img src="https://imgur.com/rPFz1Mk.gif" border="0" alt="Spongebob at the bubble bowl!"/>
-          <h1>Player 2 has won sweet victory!</h1>
-        </div>
-      );
-    } else if (this.state.p2HP <= 0) {
-      alert('Player 1 HP: ' + p1HP + '\nPlayer 2 HP: ' + p2HP + '.\n\nPlayer 1 has won the war!');
-      pWin = (
-        <div className="victory">
-          <img src="https://imgur.com/H5Lm06M.gif" border="0" alt="Spongebob at the bubble bowl!"/>
-          <h1>Player 1 has won sweet victory!</h1>
-        </div>
-      );
-    }
-
     return (
       <div className="game">
         <div className="game-title">
@@ -525,7 +470,7 @@ class Game extends Component {
         </div>
         <div className="players-turn">
           {showStatus}
-          {p1Win}
+          {pWin}
         </div>
         <div className="game-players">
           {showPlayers}
@@ -533,12 +478,12 @@ class Game extends Component {
         <div className="game-resolve">
           <Resolved
             showResolve={showResolve}
-            onClickResolve={this.handleResolveClickParent}
+            onClickResolve={this.handleClickResolve}
           />
         </div>
         <div className="game-next">
           <Next
-            onClickNext={this.handleNextClickParent}
+            onClickNext={this.handleClickNext}
           />
         </div>
       </div>
@@ -551,12 +496,12 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-function calculateDamage(isSelectedCampaign, p1Choice, p2Choice) {
+function calculateDamage(isSelectedCampaign, c1, c2) {
 
   let campaignStats = ["spock", "mage", "melee", "yolo", "whale"];
   let attacks = ["attack1", "attack2", "attack3", "attack4", "attack5"];
-  let indexOfP1Choice = attacks.indexOf(p1Choice);
-  let indexOfP2Choice = attacks.indexOf(p2Choice);
+  let indexOfP1Choice = attacks.indexOf(c1);
+  let indexOfP2Choice = attacks.indexOf(c2);
 
   if (campaignStats.includes(isSelectedCampaign) && (indexOfP1Choice !== -1) && (indexOfP2Choice !== -1)) {
     let damageArr;
