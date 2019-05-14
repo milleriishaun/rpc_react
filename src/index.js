@@ -36,14 +36,80 @@ const Resolved = ({ showResolve, onClickResolve }) =>
       Resolve!
     </button>;
 
-
-class Players extends Component {
+class Game extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      isSelectedCampaign: "spock",
+      attackNames: ["Rock!", "Paper!", "Scissors!", "Spock!" , "Lizard!"],
+      users: {
+        player1: {
+          name: "Unknown Player",
+          avatarURL: "http://i65.tinypic.com/1zwypw7.jpg",
+          choice: "",
+          HP: 400,
+          showPlayer: true,
+        },
+        player2: {
+          name: "Unknown Player",
+          avatarURL: "http://i65.tinypic.com/1zwypw7.jpg",
+          choice: "",
+          HP: 400,
+          showPlayer: true,
+        },
+      },
+      p1Choice: "",
+      p2Choice: "",
+      p1HP: 400,
+      p2HP: 400,
+      showPlayer1: true,
+      showPlayer2: false,
+      bothSelected: false,
+      resolvedBattle: false,
+      resolvedText: "",
+      showResolve: false,
+      p1WonBattle: false,
+      p1Turn: true,
+    };
+    this.handleMenuChange = this.handleMenuChange.bind(this);
+    this.handleMenuSubmit = this.handleMenuSubmit.bind(this);
     this.handleFormChange1 = this.handleFormChange1.bind(this);
     this.handleFormChange2 = this.handleFormChange2.bind(this);
     this.handleFormSubmit1 = this.handleFormSubmit1.bind(this);
     this.handleFormSubmit2 = this.handleFormSubmit2.bind(this);
+    this.handleMenuChangeParent = this.handleMenuChangeParent.bind(this);
+    this.handleMenuSubmitParent = this.handleMenuSubmitParent.bind(this);
+    this.handleFormChange1Parent = this.handleFormChange1Parent.bind(this);
+    this.handleFormChange2Parent = this.handleFormChange2Parent.bind(this);
+    this.handleFormSubmit1Parent = this.handleFormSubmit1Parent.bind(this);
+    this.handleFormSubmit2Parent = this.handleFormSubmit2Parent.bind(this);
+    this.handleResolveClickParent = this.handleResolveClickParent.bind(this);
+    this.handleNextClickParent = this.handleNextClickParent.bind(this);
+  }
+
+  handleMenuChange(e) {
+    let atkNames = getAtkNames(e.target.value);
+
+    this.setState({
+      isSelectedCampaign: e.target.value,
+      attackNames: atkNames,
+    });
+  }
+
+  handleMenuSubmit(e) {
+    this.setState({
+      isSelectedCampaign: this.state.isSelectedCampaign,
+      attackNames: this.state.attackNames,
+      users: {
+        player1: {
+          HP: 500,
+        },
+        player2: {
+          HP: 500,
+        }
+      }
+    });
+    e.preventDefault();
   }
 
   handleFormChange1(e) {
@@ -64,357 +130,8 @@ class Players extends Component {
     e.preventDefault();
   }
 
-  renderPlayer1() {
-    const {
-      attackNames,
-      p1Choice,
-      p1HP,
-      bothSelected,
-    } = this.props;
-
-    let atkBtn;
-
-    if (p1Choice === "" || bothSelected) {
-      atkBtn =
-        <button disabled>
-          Attack!
-        </button>
-    } else {
-      atkBtn =
-        <button
-          className="p1-submit"
-          type="submit"
-          id="attackButton1"
-        >
-          Attack!
-        </button>
-    }
-
-    return (
-      <div className="p1">
-        <div className="p1-hp">
-          {'Player 1 HP: ' + p1HP}
-          <br/>
-        </div>
-        <div className="p1-form">
-          <form
-            onSubmit={this.handleFormSubmit1}
-          >
-            <div className="form-check">
-              <label for="attack1" id="attack1_label">
-                <input type="radio" name="attack" value="attack1" checked={p1Choice === 'attack1'} onChange={this.handleFormChange1} className="form-check-input" id="attack1"/>
-                {attackNames[0]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-check">
-              <label for="attack2" id="attack2_label">
-                <input type="radio" name="attack" value="attack2" checked={p1Choice === 'attack2'} onChange={this.handleFormChange1} className="form-check-input" id="attack2"/>
-                {attackNames[1]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-check">
-              <label for="attack3" id="attack3_label">
-                <input type="radio" name="attack" value="attack3" checked={p1Choice === 'attack3'} onChange={this.handleFormChange1} className="form-check-input" id="attack3"/>
-                {attackNames[2]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-check">
-              <label for="attack4" id="attack4_label">
-                <input type="radio" name="attack" value="attack4" checked={p1Choice === 'attack4'} onChange={this.handleFormChange1} className="form-check-input" id="attack4"/>
-                {attackNames[3]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-check">
-              <label for="attack5" id="attack5_label">
-                <input type="radio" name="attack" value="attack5" checked={p1Choice === 'attack5'} onChange={this.handleFormChange1} className="form-check-input" id="attack5"/>
-                {attackNames[4]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-group">
-              {atkBtn}
-            </div>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  renderPlayer2() {
-    const {
-      attackNames,
-      p2Choice,
-      p2HP,
-      bothSelected,
-    } = this.props;
-
-    let atkBtn;
-
-    if (p2Choice === "" || bothSelected) {
-      atkBtn =
-        <button disabled>
-          Attack!
-        </button>
-    } else {
-      atkBtn =
-        <button
-          className="p2-submit"
-          type="submit"
-          id="attackButton2"
-        >
-          Attack!
-        </button>
-    }
-
-    return (
-      <div className="p2">
-        <div className="p2-hp">
-          {'Player 2 HP: ' + p2HP}
-          <br/>
-        </div>
-        <div className="p2-form">
-          <form
-            onSubmit={this.handleFormSubmit2}
-          >
-            <div className="form-check">
-              <label for="attack1" id="attack1_label">
-                <input type="radio" name="attack" value="attack1" checked={p2Choice === 'attack1'} onChange={this.handleFormChange2} className="form-check-input" id="attack1"/>
-                {attackNames[0]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-check">
-              <label for="attack2" id="attack2_label">
-                <input type="radio" name="attack" value="attack2" checked={p2Choice === 'attack2'} onChange={this.handleFormChange2} className="form-check-input" id="attack2"/>
-                {attackNames[1]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-check">
-              <label for="attack3" id="attack3_label">
-                <input type="radio" name="attack" value="attack3" checked={p2Choice === 'attack3'} onChange={this.handleFormChange2} className="form-check-input" id="attack3"/>
-                {attackNames[2]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-check">
-              <label for="attack4" id="attack4_label">
-                <input type="radio" name="attack" value="attack4" checked={p2Choice === 'attack4'} onChange={this.handleFormChange2} className="form-check-input" id="attack4"/>
-                {attackNames[3]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-check">
-              <label for="attack5" id="attack5_label">
-                <input type="radio" name="attack" value="attack5" checked={p2Choice === 'attack5'} onChange={this.handleFormChange2} className="form-check-input" id="attack5"/>
-                {attackNames[4]}
-              </label>
-              <br/>
-            </div>
-            <div className="form-group">
-              {atkBtn}
-            </div>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  render() {
-    const {
-      attackNames,
-      p1Choice,
-      p2Choice,
-      showPlayer1,
-      showPlayer2,
-    } = this.props;
-
-    if(!showPlayer1 && showPlayer2) {
-      return (
-        <div className="player-stats">
-          {this.renderPlayer2()}
-          <div className="p2-choice">
-            {attackNames[p2Choice[p2Choice.length - 1] - 1]}
-          </div>
-        </div>
-      );
-    } else if(showPlayer1 && !showPlayer2) {
-      return (
-        <div className="player-stats">
-          {this.renderPlayer1()}
-          <div className="p1-choice">
-            {attackNames[p1Choice[p1Choice.length - 1] - 1]}
-          </div>
-        </div>
-      );
-    } else if(!showPlayer1 && !showPlayer2) {
-      return (
-        <div className="player-stats">
-        </div>
-      );
-    } else {
-      return (
-        <div className="player-stats">
-          <div className="results">
-            Results
-          </div>
-          {this.renderPlayer1()}
-          {this.renderPlayer2()}
-        </div>
-      );
-    }
-  }
-}
-
-class Menu extends Component {
-  constructor(props) {
-    super(props);
-    this.handleMenuChange = this.handleMenuChange.bind(this);
-    this.handleMenuSubmit = this.handleMenuSubmit.bind(this);
-  }
-
-  handleMenuChange(e) {
-    this.props.onMenuChange(e.target.value);
-  }
-
-  handleMenuSubmit(e) {
-    this.props.onMenuSubmit(e.target.value);
-    e.preventDefault();
-  }
-
-  render() {
-    const {
-      isSelectedCampaign,
-      attackNames,
-      p1Choice,
-      p2Choice,
-      p1HP,
-      p2HP,
-      bothSelected,
-      resolvedBattle,
-      resolvedText,
-      showResolve,
-      p1WonBattle,
-      showPlayer1,
-      showPlayer2,
-      isReversed,
-      p1Turn,
-      onFormChange1,
-      onFormChange2,
-      onFormSubmit1,
-      onFormSubmit2,
-    } = this.props;
-
-    let turnLog = "It is " + (p1Turn ? "Player 1" : "Player 2") + "'s turn";
-
-    return (
-      <div className="whole-menu">
-        <div className="game-menu">
-          <div className="game-label">
-            Choose a new battle campaign!
-          </div>
-          <form
-            onSubmit={this.handleMenuSubmit}>
-            <label>
-              <select
-                value={isSelectedCampaign}
-                onChange={this.handleMenuChange}
-                id="menu"
-              >
-                <option value="spock">Spock</option>
-                <option value="mage">Mage</option>
-                <option value="melee">Melee</option>
-                <option value="yolo">YOLO</option>
-                <option value="whale">Whale</option>
-              </select>
-            </label>
-            <input
-              type="submit"
-              value="Submit"
-            />
-          </form>
-        </div>
-        <div className="players-turn">
-          {resolvedText !== "" ? resolvedText
-            : resolvedBattle ? 'Next battle! Who will win the war?'
-            : bothSelected ? 'Resolve battle?'
-            : turnLog
-          }
-        </div>
-        <div className="game-players">
-          <Players
-            isSelectedCampaign={isSelectedCampaign}
-            attackNames={attackNames}
-            p1Choice={p1Choice}
-            p2Choice={p2Choice}
-            p1HP={p1HP}
-            p2HP={p2HP}
-            p1WonBattle={p1WonBattle}
-            bothSelected={bothSelected}
-            showResolve={showResolve}
-            showPlayer1={showPlayer1}
-            showPlayer2={showPlayer2}
-            isReversed={isReversed}
-            p1Turn={p1Turn}
-            onFormChange1={onFormChange1}
-            onFormChange2={onFormChange2}
-            onFormSubmit1={onFormSubmit1}
-            onFormSubmit2={onFormSubmit2}
-          />
-        </div>
-      </div>
-    );
-  }
-}
-
-class Game extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isSelectedCampaign: "spock",
-      attackNames: ["Rock!", "Paper!", "Scissors!", "Spock!" , "Lizard!"],
-      user: {
-        name: "",
-        avatarURL: "",
-        choice: "",
-        HP: 400,
-        showPlayer: true,
-      },
-      p1Choice: "",
-      p2Choice: "",
-      p1HP: 400,
-      p2HP: 400,
-      bothSelected: false,
-      resolvedBattle: false,
-      resolvedText: "",
-      showResolve: false,
-      p1WonBattle: false,
-      showPlayer1: true,
-      showPlayer2: false,
-      isReversed: false,
-      p1Turn: true,
-    };
-    this.handleMenuChangeParent = this.handleMenuChangeParent.bind(this);
-    this.handleMenuSubmitParent = this.handleMenuSubmitParent.bind(this);
-    this.handleFormChange1Parent = this.handleFormChange1Parent.bind(this);
-    this.handleFormChange2Parent = this.handleFormChange2Parent.bind(this);
-    this.handleFormSubmit1Parent = this.handleFormSubmit1Parent.bind(this);
-    this.handleFormSubmit2Parent = this.handleFormSubmit2Parent.bind(this);
-    this.handleResolveClickParent = this.handleResolveClickParent.bind(this);
-    this.handleNextClickParent = this.handleNextClickParent.bind(this);
-  }
-
   handleMenuChangeParent(isSelectedCampaign) {
-    let atkNames = getAtkNames(isSelectedCampaign);
 
-    this.setState({
-      isSelectedCampaign: isSelectedCampaign,
-      attackNames: atkNames,
-    });
     // // this shows up to date info; 'spock'
     // alert('changed, isSelectedCampaign from const: ' + isSelectedCampaign);
     // // this brought up to date info, so it is a good sign
@@ -422,12 +139,7 @@ class Game extends Component {
   }
 
   handleMenuSubmitParent() {
-    this.setState({
-      isSelectedCampaign: this.state.isSelectedCampaign,
-      attackNames: this.state.attackNames,
-      p1HP: 500,
-      p2HP: 500,
-    });
+
     // e.preventDefault();
     // // This works, but using the const doesn't work like in handleMenuChangeParent
     // // I guess I don't need to pass in the const for Submit
@@ -517,6 +229,166 @@ class Game extends Component {
     });
   }
 
+  renderPlayer1() {
+    const {
+      attackNames,
+      p1Choice,
+      p1HP,
+      bothSelected,
+    } = this.state;
+
+    let atkBtn;
+
+    if (p1Choice === "" || bothSelected) {
+      atkBtn =
+        <button disabled>
+          Attack!
+        </button>
+    } else {
+      atkBtn =
+        <button
+          className="p1-submit"
+          type="submit"
+          id="attackButton1"
+        >
+          Attack!
+        </button>
+    }
+
+    return (
+      <div className="p1">
+        <div className="p1-hp">
+          {'Player 1 HP: ' + p1HP}
+          <br/>
+        </div>
+        <div className="p1-form">
+          <form
+            onSubmit={this.handleFormSubmit1}
+          >
+            <div className="form-check">
+              <label for="attack1" id="attack1_label">
+                <input type="radio" name="attack" value="attack1" checked={p1Choice === 'attack1'} onChange={this.handleFormChange1} className="form-check-input" id="attack1"/>
+                {attackNames[0]}
+              </label>
+              <br/>
+            </div>
+            <div className="form-check">
+              <label for="attack2" id="attack2_label">
+                <input type="radio" name="attack" value="attack2" checked={p1Choice === 'attack2'} onChange={this.handleFormChange1} className="form-check-input" id="attack2"/>
+                {attackNames[1]}
+              </label>
+              <br/>
+            </div>
+            <div className="form-check">
+              <label for="attack3" id="attack3_label">
+                <input type="radio" name="attack" value="attack3" checked={p1Choice === 'attack3'} onChange={this.handleFormChange1} className="form-check-input" id="attack3"/>
+                {attackNames[2]}
+              </label>
+              <br/>
+            </div>
+            <div className="form-check">
+              <label for="attack4" id="attack4_label">
+                <input type="radio" name="attack" value="attack4" checked={p1Choice === 'attack4'} onChange={this.handleFormChange1} className="form-check-input" id="attack4"/>
+                {attackNames[3]}
+              </label>
+              <br/>
+            </div>
+            <div className="form-check">
+              <label for="attack5" id="attack5_label">
+                <input type="radio" name="attack" value="attack5" checked={p1Choice === 'attack5'} onChange={this.handleFormChange1} className="form-check-input" id="attack5"/>
+                {attackNames[4]}
+              </label>
+              <br/>
+            </div>
+            <div className="form-group">
+              {atkBtn}
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  renderPlayer2() {
+    const {
+      attackNames,
+      p2Choice,
+      p2HP,
+      bothSelected,
+    } = this.state;
+
+    let atkBtn;
+
+    if (p2Choice === "" || bothSelected) {
+      atkBtn =
+        <button disabled>
+          Attack!
+        </button>
+    } else {
+      atkBtn =
+        <button
+          className="p2-submit"
+          type="submit"
+          id="attackButton2"
+        >
+          Attack!
+        </button>
+    }
+
+    return (
+      <div className="p2">
+        <div className="p2-hp">
+          {'Player 2 HP: ' + p2HP}
+          <br/>
+        </div>
+        <div className="p2-form">
+          <form
+            onSubmit={this.handleFormSubmit2}
+          >
+            <div className="form-check">
+              <label for="attack1" id="attack1_label">
+                <input type="radio" name="attack" value="attack1" checked={p2Choice === 'attack1'} onChange={this.handleFormChange2} className="form-check-input" id="attack1"/>
+                {attackNames[0]}
+              </label>
+              <br/>
+            </div>
+            <div className="form-check">
+              <label for="attack2" id="attack2_label">
+                <input type="radio" name="attack" value="attack2" checked={p2Choice === 'attack2'} onChange={this.handleFormChange2} className="form-check-input" id="attack2"/>
+                {attackNames[1]}
+              </label>
+              <br/>
+            </div>
+            <div className="form-check">
+              <label for="attack3" id="attack3_label">
+                <input type="radio" name="attack" value="attack3" checked={p2Choice === 'attack3'} onChange={this.handleFormChange2} className="form-check-input" id="attack3"/>
+                {attackNames[2]}
+              </label>
+              <br/>
+            </div>
+            <div className="form-check">
+              <label for="attack4" id="attack4_label">
+                <input type="radio" name="attack" value="attack4" checked={p2Choice === 'attack4'} onChange={this.handleFormChange2} className="form-check-input" id="attack4"/>
+                {attackNames[3]}
+              </label>
+              <br/>
+            </div>
+            <div className="form-check">
+              <label for="attack5" id="attack5_label">
+                <input type="radio" name="attack" value="attack5" checked={p2Choice === 'attack5'} onChange={this.handleFormChange2} className="form-check-input" id="attack5"/>
+                {attackNames[4]}
+              </label>
+              <br/>
+            </div>
+            <div className="form-group">
+              {atkBtn}
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   render() {
     const {
       isSelectedCampaign,
@@ -532,70 +404,145 @@ class Game extends Component {
       p1WonBattle,
       showPlayer1,
       showPlayer2,
-      isReversed,
       p1Turn,
+      onFormChange1,
+      onFormChange2,
+      onFormSubmit1,
+      onFormSubmit2,
     } = this.state;
+
+    let turnLog = "It is " + (p1Turn ? "Player 1" : "Player 2") + "'s turn";
+    let pWin;
+    let showMenu;
+    let showStatus;
+    let showPlayers;
+
+    if (isSelectedCampaign) {
+      showMenu = (
+        <div className="game-menu">
+          <div className="game-label">
+            Choose a new battle campaign!
+          </div>
+          <form
+            onSubmit={this.handleMenuSubmit}>
+            <label>
+              <select
+                value={isSelectedCampaign}
+                onChange={this.handleMenuChange}
+                id="menu"
+              >
+                <option value="spock">Spock</option>
+                <option value="mage">Mage</option>
+                <option value="melee">Melee</option>
+                <option value="yolo">YOLO</option>
+                <option value="whale">Whale</option>
+              </select>
+            </label>
+            <input
+              type="submit"
+              value="Submit"
+            />
+          </form>
+        </div>
+      );
+    }
+
+    if (resolvedText) {
+      showStatus = 'Next battle! Who will win the war?';
+      if (resolvedBattle) {
+        showStatus = 'Resolve Battle?';
+        if (bothSelected) {
+          showStatus = turnLog;
+        }
+      }
+    }
+    // let showStatus = (resolvedText !== "" ? resolvedText
+    //           : resolvedBattle ? 'Next battle! Who will win the war?'
+    //           : bothSelected ? 'Resolve battle?'
+    //           : turnLog
+    // )
+
+    if(!showPlayer1 && showPlayer2) {
+      showPlayers = (
+        <div className="player-stats">
+          {this.renderPlayer2()}
+          <div className="p2-choice">
+            {attackNames[p2Choice[p2Choice.length - 1] - 1]}
+          </div>
+        </div>
+      );
+    } else if(showPlayer1 && !showPlayer2) {
+      showPlayers = (
+        <div className="player-stats">
+          {this.renderPlayer1()}
+          <div className="p1-choice">
+            {attackNames[p1Choice[p1Choice.length - 1] - 1]}
+          </div>
+        </div>
+      );
+    } else if(!showPlayer1 && !showPlayer2) {
+      showPlayers = (
+        <div className="player-stats">
+        </div>
+      );
+    } else {
+      showPlayers = (
+        <div className="player-stats">
+          <div className="results">
+            Results
+          </div>
+          {this.renderPlayer1()}
+          {this.renderPlayer2()}
+        </div>
+      );
+    }
 
     if (this.state.p1HP <= 0) {
       alert('Player 1 HP: ' + p1HP + '\nPlayer 2 HP: ' + p2HP + '.\n\nPlayer 2 has won the war!');
-      return (
+      pWin = (
         <div className="victory">
           <img src="https://imgur.com/rPFz1Mk.gif" border="0" alt="Spongebob at the bubble bowl!"/>
           <h1>Player 2 has won sweet victory!</h1>
         </div>
-      )
+      );
     } else if (this.state.p2HP <= 0) {
       alert('Player 1 HP: ' + p1HP + '\nPlayer 2 HP: ' + p2HP + '.\n\nPlayer 1 has won the war!');
-      return (
+      pWin = (
         <div className="victory">
           <img src="https://imgur.com/H5Lm06M.gif" border="0" alt="Spongebob at the bubble bowl!"/>
           <h1>Player 1 has won sweet victory!</h1>
         </div>
-      )
-    } else {
-      return (
-        <div className="game">
-          <div className="game-title">
-            Rock, Paper, Scissors
-          </div>
-          <Menu
-            isSelectedCampaign={isSelectedCampaign}
-            attackNames={attackNames}
-            p1Choice={p1Choice}
-            p2Choice={p2Choice}
-            p1HP={p1HP}
-            p2HP={p2HP}
-            bothSelected={bothSelected}
-            resolvedBattle={resolvedBattle}
-            resolvedText={resolvedText}
-            p1WonBattle={p1WonBattle}
-            showPlayer1={showPlayer1}
-            showPlayer2={showPlayer2}
-            isReversed={isReversed}
-            p1Turn={p1Turn}
-            onMenuChange={this.handleMenuChangeParent}
-            onMenuSubmit={this.handleMenuSubmitParent}
-            onFormChange1={this.handleFormChange1Parent}
-            onFormChange2={this.handleFormChange2Parent}
-            onFormSubmit1={this.handleFormSubmit1Parent}
-            onFormSubmit2={this.handleFormSubmit2Parent}
-            onClickResolve={this.handleResolveClickParent}
-            onClickNext={this.handleNextClickParent}
-          />
-          <div className="game-resolve">
-            <Resolved
-              showResolve={showResolve}
-              onClickResolve={this.handleResolveClickParent}
-            />
-          </div>
-          <div className="game-next">
-            <Next
-              onClickNext={this.handleNextClickParent}
-            />
-          </div>
-        </div>
       );
     }
+
+    return (
+      <div className="game">
+        <div className="game-title">
+          Rock, Paper, Scissors
+        </div>
+        <div className="whole-menu">
+          {showMenu}
+        </div>
+        <div className="players-turn">
+          {showStatus}
+          {p1Win}
+        </div>
+        <div className="game-players">
+          {showPlayers}
+        </div>
+        <div className="game-resolve">
+          <Resolved
+            showResolve={showResolve}
+            onClickResolve={this.handleResolveClickParent}
+          />
+        </div>
+        <div className="game-next">
+          <Next
+            onClickNext={this.handleNextClickParent}
+          />
+        </div>
+      </div>
+    );
   }
 }
 
