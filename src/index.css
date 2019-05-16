@@ -70,6 +70,11 @@ body {
   margin-left: 20px;
 }
 
+.p-User {
+  color: rgb(231, 126, 5);
+  border: 2px solid rgb(76, 8, 187);
+}
+
 .p-profile {
   color: rgb(231, 126, 5);
   border: 2px solid rgb(76, 8, 187);
