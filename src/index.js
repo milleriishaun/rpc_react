@@ -549,7 +549,7 @@ class Game extends Component {
         </div>
         <div className="game-next">
           <Next
-            onClickNext={this.handleClickNext}
+            onClickNext={() => this.handleClickNext(users)}
           />
         </div>
       </div>
