@@ -448,7 +448,7 @@ class Game extends Component {
             <label>
               <select
                 value={isSelectedCampaign}
-                onChange={this.handleChangeMenu}
+                onChange={(e) => this.handleChangeMenu(e)}
                 id="menu"
               >
                 <option value="spock">Spock</option>
@@ -513,7 +513,7 @@ class Game extends Component {
                 <div className="p-User">
                   <User item={item}/>
                 </div>
-                {this.renderPlayer(item, item.choice)}
+                {this.renderPlayer(item)}
                 <div className="p-choice">
                   {attackNames[(item.choice[ item.choice.length - 1 ]) - 1]}
                 </div>
