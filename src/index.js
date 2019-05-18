@@ -17,22 +17,22 @@ const Resolved = ({ showResolve, onClickResolve }) =>
       Resolve!
     </button>;
 
-const AvatarRound = ({ user }) => (
-  <img className="round" alt="avatar" src={user.avatarURL} />
+const AvatarRound = ({ user_avatarURL }) => (
+  <img className="round" alt="avatar" src={user_avatarURL} />
 );
 
-const Profile = ({ user, children }) => (
+const Profile = ({ user_name, children }) => (
   <div className="p-profile">
     <div>{children}</div>
     <div>
-      <p>{user}</p>
+      <p>{user_name}</p>
     </div>
   </div>
 );
 
-const User = ({ user }) => (
-  <Profile user={user}>
-    <AvatarRound user={user} />
+const User = ({ user_id, user_name, user_avatarURL, user_choice, user_HP, user_showPlayer }) => (
+  <Profile user_name={user_name}>
+    <AvatarRound user_avatarURL={user_avatarURL} />
   </Profile>
 );
 
@@ -40,8 +40,8 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isSelectedCampaign: "",
-      attackNames: ["blank", "blank", "blank", "blank" , "blank"],
+      isSelectedCampaign: "Spock",
+      attackNames: ["Rock!", "Paper!", "Scissors!", "Spock!" , "Lizard!"],
       users: [
         { id : '1',
           name: 'player1',
@@ -55,7 +55,7 @@ class Game extends Component {
           avatarURL: "http://i65.tinypic.com/1zwypw7.jpg",
           choice: "",
           HP: 400,
-          showPlayer: true,
+          showPlayer: false,
         },
       ],
       bothSelected: false,
@@ -114,7 +114,7 @@ class Game extends Component {
     let atkNames = getAtkNames(e.target.value);
 
     this.setState({
-      isSelectedCampaign: e.target.value,
+      // isSelectedCampaign: e.target.value,
       attackNames: atkNames,
     });
   }
@@ -336,7 +336,7 @@ class Game extends Component {
     });
   }
 
-  renderPlayer(user) {
+  renderPlayer(id) {
 
     const {
       attackNames,
@@ -345,8 +345,15 @@ class Game extends Component {
     } = this.state;
 
     let atkBtn;
-
-    if (user.choice === "" || bothSelected) {
+    if (!users[1].name) {
+      return null;
+    }
+    // alert(user);
+    // if (user.choice === "") {
+    //   alert('user.choice: ' + user.choice);
+    // }
+    alert('users[id].name: ' + users[0].name);
+    if (users[id].choice === "" || bothSelected) {
       atkBtn =
         <button disabled>
           Attack!
@@ -363,48 +370,45 @@ class Game extends Component {
 
     return (
       <div className="player">
-        <div className="p-profile">
-          <User user={user}/>
-        </div>
         <div className="p-hp">
-          {user.name + ' HP: ' + user.HP}
+          {users[id].name + ' HP: ' + users[id].HP}
           <br/>
         </div>
         <div className="p-form">
           <form
-            onSubmit={() => this.handleSubmitForm(users, user.name)}
+            onSubmit={() => this.handleSubmitForm(users, users[id].name)}
           >
             <div className="p-form-check">
               <label for="attack1" id="attack1_label">
-                <input type="radio" name="attack" value="attack1" checked={user.choice === 'attack1'} onChange={() => this.handleChangeForm(users, user.name, user.choice)} className="p-form-check-input" id="attack1"/>
+                <input type="radio" name="attack" value="attack1" checked={users[id].choice === 'attack1'} onChange={() => this.handleChangeForm(users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack1"/>
                 {attackNames[0]}
               </label>
               <br/>
             </div>
             <div className="p-form-check">
               <label for="attack2" id="attack2_label">
-                <input type="radio" name="attack" value="attack2" checked={user.choice === 'attack2'} onChange={() => this.handleChangeForm(users, user.name, user.choice)} className="p-form-check-input" id="attack2"/>
+                <input type="radio" name="attack" value="attack2" checked={users[id].choice === 'attack2'} onChange={() => this.handleChangeForm(users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack2"/>
                 {attackNames[1]}
               </label>
               <br/>
             </div>
             <div className="p-form-check">
               <label for="attack3" id="attack3_label">
-                <input type="radio" name="attack" value="attack3" checked={user.choice === 'attack3'} onChange={() => this.handleChangeForm(users, user.name, user.choice)} className="p-form-check-input" id="attack3"/>
+                <input type="radio" name="attack" value="attack3" checked={users[id].choice === 'attack3'} onChange={() => this.handleChangeForm(users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack3"/>
                 {attackNames[2]}
               </label>
               <br/>
             </div>
             <div className="p-form-check">
               <label for="attack4" id="attack4_label">
-                <input type="radio" name="attack" value="attack4" checked={user.choice === 'attack4'} onChange={() => this.handleChangeForm(users, user.name, user.choice)} className="p-form-check-input" id="attack4"/>
+                <input type="radio" name="attack" value="attack4" checked={users[id].choice === 'attack4'} onChange={() => this.handleChangeForm(users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack4"/>
                 {attackNames[3]}
               </label>
               <br/>
             </div>
             <div className="p-form-check">
               <label for="attack5" id="attack5_label">
-                <input type="radio" name="attack" value="attack5" checked={user.choice === 'attack5'} onChange={() => this.handleChangeForm(users, user.name, user.choice)} className="p-form-check-input" id="attack5"/>
+                <input type="radio" name="attack" value="attack5" checked={users[id].choice === 'attack5'} onChange={() => this.handleChangeForm(users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack5"/>
                 {attackNames[4]}
               </label>
               <br/>
@@ -413,6 +417,9 @@ class Game extends Component {
               {atkBtn}
             </div>
           </form>
+        </div>
+        <div className="p-choice">
+          {attackNames[(users[id].choice[ users[id].choice.length - 1 ]) - 1]}
         </div>
       </div>
     );
@@ -437,7 +444,7 @@ class Game extends Component {
     let pWin;
     let showPlayers;
 
-    if (!isSelectedCampaign) {
+    if (isSelectedCampaign) {
       showMenu = (
         <div className="game-menu">
           <div className="game-label">
@@ -498,6 +505,7 @@ class Game extends Component {
       }
     }
 
+
     let shownPlayers = users.filter(item => item.showPlayer);
 
     showPlayers = (
@@ -508,18 +516,20 @@ class Game extends Component {
         }
         <div className="player-stats">
           <ul>
-            {users.map(item => (
+            {this.state && this.state.users && this.state.users.map(item => (
               <li key={item.id}>
-                <div className="p-User">
-                  <User item={item}/>
-                </div>
-                {this.renderPlayer(item)}
-                <div className="p-choice">
-                  {attackNames[(item.choice[ item.choice.length - 1 ]) - 1]}
-                </div>
+                <User
+                  user_id={item.id}
+                  user_name={item.name}
+                  user_avatarURL={item.avatarURL}
+                  user_choice={item.choice}
+                  user_HP={item.HP}
+                  user_showPlayer={item.showPlayer}
+                />
+                {this.renderPlayer(item.id)}
               </li>
             )).filter(item => (
-              item.showPlayer)
+              !item.showPlayer)
             )}
           </ul>
         </div>
@@ -666,7 +676,7 @@ function calculateDamage(isSelectedCampaign, c1, c2) {
 }
 
 function getAtkNames(isSelectedCampaign1) {
-  let campaignStats = ["mage", "melee", "yolo", "spock", "whale"];
+  let campaignStats = ["spock", "mage", "melee", "yolo", "whale"];
   let gestures = [
     ["Rock!", "Paper!", "Scissors!", "Spock!" , "Lizard!"],
     ["Fire Ball!", "Lightning Bolt!", "Water Blast!", "Earth Stomp!", "Wind Gust!"],
