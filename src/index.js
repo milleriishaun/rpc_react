@@ -43,14 +43,14 @@ class Game extends Component {
       isSelectedCampaign: "Spock",
       attackNames: ["Rock!", "Paper!", "Scissors!", "Spock!" , "Lizard!"],
       users: [
-        { id : '1',
+        { id : '0',
           name: 'player1',
           avatarURL: "http://i65.tinypic.com/1zwypw7.jpg",
           choice: "",
           HP: 400,
           showPlayer: true,
         },
-        { id : '2',
+        { id : '1',
           name: 'player2',
           avatarURL: "http://i65.tinypic.com/1zwypw7.jpg",
           choice: "",
@@ -345,13 +345,7 @@ class Game extends Component {
     } = this.state;
 
     let atkBtn;
-    if (!users[1].name) {
-      return null;
-    }
-    // alert(user);
-    // if (user.choice === "") {
-    //   alert('user.choice: ' + user.choice);
-    // }
+
     alert('users[id].name: ' + users[0].name);
     if (users[id].choice === "" || bothSelected) {
       atkBtn =
@@ -516,7 +510,8 @@ class Game extends Component {
         }
         <div className="player-stats">
           <ul>
-            {this.state && this.state.users && this.state.users.map(item => (
+            {users.slice(0, 2).map(item => {
+              return (
               <li key={item.id}>
                 <User
                   user_id={item.id}
@@ -528,9 +523,7 @@ class Game extends Component {
                 />
                 {this.renderPlayer(item.id)}
               </li>
-            )).filter(item => (
-              !item.showPlayer)
-            )}
+            )})}
           </ul>
         </div>
       </div>
