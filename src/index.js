@@ -144,14 +144,17 @@ class Game extends Component {
     e.preventDefault();
   }
 
-  handleChangeForm(users, name, choice) {
-    this.setState(state => {
-      if (name === users[0].name) {
-        state.users = [
+  handleChangeForm(e, users, name, choice) {
+    let val = e.target.value;
+    alert('val: ' + val + '\nname: ' + name + '\nchoice: ' + choice);
+    if (name === users[0].name) {
+      alert('hi');
+      this.setState({
+        users: [
           { id : users[0].id,
             name: users[0].name,
             avatarURL: users[0].avatarURL,
-            choice: choice,
+            choice: val,
             HP: users[0].HP,
             showPlayer: !users[0].showPlayer,
           },
@@ -162,9 +165,12 @@ class Game extends Component {
             HP: users[1].HP,
             showPlayer: users[1].showPlayer,
           },
-        ];
-      } else if(name === users[1].name) {
-        state.users = [
+        ]
+      });
+    } else if(name === users[1].name) {
+      alert('hi2');
+      this.setState({
+        users: [
           { id : users[0].id,
             name: users[0].name,
             avatarURL: users[0].avatarURL,
@@ -175,20 +181,19 @@ class Game extends Component {
           { id : users[1].id,
             name: users[1].name,
             avatarURL: users[1].avatarURL,
-            choice: choice,
+            choice: val,
             HP: users[1].HP,
             showPlayer: !users[1].showPlayer,
           },
-        ];
-      }
-      return state;
-    });
+        ]
+      });
+    }
   }
 
-  handleSubmitForm(users, name) {
-    this.setState(state => {
-      if (name === users[0].name) {
-        state.users = [
+  handleSubmitForm(e, users, name) {
+    if (name === users[0].name) {
+      this.setState({
+        users: [
           { id : users[0].id,
             name: users[0].name,
             avatarURL: users[0].avatarURL,
@@ -203,9 +208,11 @@ class Game extends Component {
             HP: users[1].HP,
             showPlayer: users[1].showPlayer,
           },
-        ];
-      } else if(name === users[1].name) {
-        state.users = [
+        ]
+      });
+    } else if(name === users[1].name) {
+      this.setState({
+        users: [
           { id : users[0].id,
             name: users[0].name,
             avatarURL: users[0].avatarURL,
@@ -220,13 +227,13 @@ class Game extends Component {
             HP: users[1].HP,
             showPlayer: !users[1].showPlayer,
           },
-        ];
-        state.p1turn = !this.state.p1Turn;
-        state.bothSelected = true;
-        state.showResolve = true;
-      }
-      return state;
-    });
+        ],
+        p1turn: !this.state.p1Turn,
+        bothSelected: true,
+        showResolve: true,
+      });
+    }
+    e.preventDefault();
   }
 
   handleClickResolve(users) {
@@ -346,7 +353,7 @@ class Game extends Component {
 
     let atkBtn;
 
-    alert('users[id].name: ' + users[0].name);
+    // alert('users[id].name: ' + users[0].name);
     if (users[id].choice === "" || bothSelected) {
       atkBtn =
         <button disabled>
@@ -370,39 +377,39 @@ class Game extends Component {
         </div>
         <div className="p-form">
           <form
-            onSubmit={() => this.handleSubmitForm(users, users[id].name)}
+            onSubmit={(e) => this.handleSubmitForm(e, users, users[id].name)}
           >
             <div className="p-form-check">
               <label for="attack1" id="attack1_label">
-                <input type="radio" name="attack" value="attack1" checked={users[id].choice === 'attack1'} onChange={() => this.handleChangeForm(users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack1"/>
+                <input type="radio" name="attack" value="attack1" checked={users[id].choice === 'attack1'} onChange={(e) => this.handleChangeForm(e, users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack1"/>
                 {attackNames[0]}
               </label>
               <br/>
             </div>
             <div className="p-form-check">
               <label for="attack2" id="attack2_label">
-                <input type="radio" name="attack" value="attack2" checked={users[id].choice === 'attack2'} onChange={() => this.handleChangeForm(users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack2"/>
+                <input type="radio" name="attack" value="attack2" checked={users[id].choice === 'attack2'} onChange={(e) => this.handleChangeForm(e, users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack2"/>
                 {attackNames[1]}
               </label>
               <br/>
             </div>
             <div className="p-form-check">
               <label for="attack3" id="attack3_label">
-                <input type="radio" name="attack" value="attack3" checked={users[id].choice === 'attack3'} onChange={() => this.handleChangeForm(users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack3"/>
+                <input type="radio" name="attack" value="attack3" checked={users[id].choice === 'attack3'} onChange={(e) => this.handleChangeForm(e, users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack3"/>
                 {attackNames[2]}
               </label>
               <br/>
             </div>
             <div className="p-form-check">
               <label for="attack4" id="attack4_label">
-                <input type="radio" name="attack" value="attack4" checked={users[id].choice === 'attack4'} onChange={() => this.handleChangeForm(users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack4"/>
+                <input type="radio" name="attack" value="attack4" checked={users[id].choice === 'attack4'} onChange={(e) => this.handleChangeForm(e, users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack4"/>
                 {attackNames[3]}
               </label>
               <br/>
             </div>
             <div className="p-form-check">
               <label for="attack5" id="attack5_label">
-                <input type="radio" name="attack" value="attack5" checked={users[id].choice === 'attack5'} onChange={() => this.handleChangeForm(users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack5"/>
+                <input type="radio" name="attack" value="attack5" checked={users[id].choice === 'attack5'} onChange={(e) => this.handleChangeForm(e, users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack5"/>
                 {attackNames[4]}
               </label>
               <br/>
@@ -523,7 +530,11 @@ class Game extends Component {
                 />
                 {this.renderPlayer(item.id)}
               </li>
-            )})}
+              )}).filter(item => {
+                return (
+                  !item.showPlayer
+              )})
+            }
           </ul>
         </div>
       </div>
