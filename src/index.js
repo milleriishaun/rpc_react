@@ -148,7 +148,7 @@ class Game extends Component {
     let val = e.target.value;
     alert('val: ' + val + '\nname: ' + name + '\nchoice: ' + choice);
     if (name === users[0].name) {
-      alert('hi');
+      alert('p1 choice changed: ' + val);
       this.setState({
         users: [
           { id : users[0].id,
