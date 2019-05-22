@@ -2,8 +2,13 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const Next = ({ onClickNext }) =>
+const Next = ({ showNext, onClickNext }) =>
+  showNext ?
   <button onClick={onClickNext}>
+    Next
+  </button>
+  :
+  <button disabled>
     Next
   </button>;
 
@@ -18,20 +23,26 @@ const Resolved = ({ showResolve, onClickResolve }) =>
     </button>;
 
 const AvatarRound = ({ user_avatarURL }) => (
-  <img className="round" alt="avatar" src={user_avatarURL} />
+  <div className="round">
+    <img alt="avatar" src={user_avatarURL} />
+  </div>
 );
 
-const Profile = ({ user_name, children }) => (
+const Profile = ({ user_name, user_HP, children }) => (
   <div className="p-profile">
     <div>{children}</div>
     <div>
       <p>{user_name}</p>
+      <p>HP: {user_HP}</p>
     </div>
   </div>
 );
 
 const User = ({ user_id, user_name, user_avatarURL, user_choice, user_HP, user_showPlayer }) => (
-  <Profile user_name={user_name}>
+  <Profile
+    user_name={user_name}
+    user_HP={user_HP}
+  >
     <AvatarRound user_avatarURL={user_avatarURL} />
   </Profile>
 );
@@ -40,7 +51,7 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isSelectedCampaign: "Spock",
+      isSelectedCampaign: "spock",
       attackNames: ["Rock!", "Paper!", "Scissors!", "Spock!" , "Lizard!"],
       users: [
         { id : '0',
@@ -61,9 +72,10 @@ class Game extends Component {
       bothSelected: false,
       resolvedBattle: false,
       resolvedText: "",
-      showResolve: false,
       p1WonBattle: false,
       p1Turn: true,
+      showIsSelectedCampaign: true,
+      showResolve: false,
       showNext: false,
     };
     this.handleChangeMenu = this.handleChangeMenu.bind(this);
@@ -74,47 +86,11 @@ class Game extends Component {
     this.handleClickNext = this.handleClickNext.bind(this);
   }
 
-  // handleFormChange1(e) {
-  //   // this.props.onFormChange1(e.target.value);
-  // }
-
-  // handleFormChange2(e) {
-  //   // this.props.onFormChange2(e.target.value);
-  // }
-
-  // handleFormSubmit1(e) {
-  //   // this.props.onFormSubmit1(e.target.value);
-  //   // e.preventDefault();
-  // }
-
-  // handleFormSubmit2(e) {
-  //   // this.props.onFormSubmit2(e.target.value);
-  //   // e.preventDefault();
-  // }
-
-  // handleMenuChangeParent(isSelectedCampaign) {
-
-  //   // // this shows up to date info; 'spock'
-  //   // alert('changed, isSelectedCampaign from const: ' + isSelectedCampaign);
-  //   // // this brought up to date info, so it is a good sign
-  //   // alert('up to date?, this.state.p1HP: ' + this.state.p1HP + ', this.state.p2HP: ' + this.state.p2HP);
-  // }
-
-  // handleMenuSubmitParent() {
-
-  //   // e.preventDefault();
-  //   // // This works, but using the const doesn't work like in handleMenuChangeParent
-  //   // // I guess I don't need to pass in the const for Submit
-  //   // alert('submitted, this.state.p1HP: ' + this.state.p1HP + ', this.state.p2HP: ' + this.state.p2HP);
-  //   // // This was memorized, so it is a good sign
-  //   // alert('test if memorized: ' + this.state.isSelectedCampaign);
-  // }
-
   handleChangeMenu(e) {
     let atkNames = getAtkNames(e.target.value);
 
     this.setState({
-      // isSelectedCampaign: e.target.value,
+      isSelectedCampaign: e.target.value,
       attackNames: atkNames,
     });
   }
@@ -137,26 +113,24 @@ class Game extends Component {
           avatarURL: users[1].avatarURL,
           choice: users[1].choice,
           HP: 500,
-          showPlayer: users[1].showPlayer,
+          showPlayer: false,
         },
       ],
+      showIsSelectedCampaign: false,
     });
     e.preventDefault();
   }
 
-  handleChangeForm(e, users, name, choice) {
-    let val = e.target.value;
-    alert('val: ' + val + '\nname: ' + name + '\nchoice: ' + choice);
+  handleChangeForm(e, users, name) {
     if (name === users[0].name) {
-      alert('p1 choice changed: ' + val);
       this.setState({
         users: [
           { id : users[0].id,
             name: users[0].name,
             avatarURL: users[0].avatarURL,
-            choice: val,
+            choice: e.target.value,
             HP: users[0].HP,
-            showPlayer: !users[0].showPlayer,
+            showPlayer: users[0].showPlayer,
           },
           { id : users[1].id,
             name: users[1].name,
@@ -168,7 +142,6 @@ class Game extends Component {
         ]
       });
     } else if(name === users[1].name) {
-      alert('hi2');
       this.setState({
         users: [
           { id : users[0].id,
@@ -181,9 +154,9 @@ class Game extends Component {
           { id : users[1].id,
             name: users[1].name,
             avatarURL: users[1].avatarURL,
-            choice: val,
+            choice: e.target.value,
             HP: users[1].HP,
-            showPlayer: !users[1].showPlayer,
+            showPlayer: users[1].showPlayer,
           },
         ]
       });
@@ -206,9 +179,10 @@ class Game extends Component {
             avatarURL: users[1].avatarURL,
             choice: users[1].choice,
             HP: users[1].HP,
-            showPlayer: users[1].showPlayer,
+            showPlayer: !users[1].showPlayer,
           },
-        ]
+        ],
+        p1Turn: !this.state.p1Turn,
       });
     } else if(name === users[1].name) {
       this.setState({
@@ -228,7 +202,7 @@ class Game extends Component {
             showPlayer: !users[1].showPlayer,
           },
         ],
-        p1turn: !this.state.p1Turn,
+        p1Turn: !this.state.p1Turn,
         bothSelected: true,
         showResolve: true,
       });
@@ -255,14 +229,13 @@ class Game extends Component {
             avatarURL: users[1].avatarURL,
             choice: users[1].choice,
             HP: users[1].HP,
-            showPlayer: users[1].showPlayer,
+            showPlayer: true,
           },
         ],
-        bothSelected: true,
         resolvedBattle: true,
-        resolvedText: 'Player 2 took ' + damage + ' damage!',
-        showResolve: false,
+        resolvedText: 'Player 1 took ' + damage + ' damage!',
         p1WonBattle: true,
+        showResolve: false,
         showNext: true,
       });
     } else if (((j > k) && ((j + k) % 2 === 0)) || ((j < k) && ((j + k) % 2 !== 0))) {
@@ -273,7 +246,7 @@ class Game extends Component {
             avatarURL: users[0].avatarURL,
             choice: users[0].choice,
             HP: users[0].HP,
-            showPlayer: users[0].showPlayer,
+            showPlayer: true,
           },
           { id : users[1].id,
             name: users[1].name,
@@ -283,11 +256,10 @@ class Game extends Component {
             showPlayer: true,
           },
         ],
-        bothSelected: true,
         resolvedBattle: true,
-        resolvedText: 'Player 1 took ' + damage + ' damage!',
-        showResolve: false,
+        resolvedText: 'Player 2 took ' + damage + ' damage!',
         p1WonBattle: true,
+        showResolve: false,
         showNext: true,
       });
     } else {
@@ -308,7 +280,6 @@ class Game extends Component {
             showPlayer: true,
           },
         ],
-        bothSelected: true,
         resolvedBattle: true,
         resolvedText: 'Tie! No player took damage! Press "Next" to battle again.',
         showResolve: false,
@@ -353,7 +324,10 @@ class Game extends Component {
 
     let atkBtn;
 
-    // alert('users[id].name: ' + users[0].name);
+    if (!users[id]) {
+      return null;
+    }
+
     if (users[id].choice === "" || bothSelected) {
       atkBtn =
         <button disabled>
@@ -371,10 +345,6 @@ class Game extends Component {
 
     return (
       <div className="player">
-        <div className="p-hp">
-          {users[id].name + ' HP: ' + users[id].HP}
-          <br/>
-        </div>
         <div className="p-form">
           <form
             onSubmit={(e) => this.handleSubmitForm(e, users, users[id].name)}
@@ -429,23 +399,21 @@ class Game extends Component {
   render() {
     const {
       isSelectedCampaign,
-      attackNames,
       users,
       bothSelected,
-      resolvedBattle,
       resolvedText,
+      showIsSelectedCampaign,
       showResolve,
-      p1WonBattle,
+      showNext,
       p1Turn,
     } = this.state;
 
     let showMenu;
     let showStatus;
-    let turnLog = "It is " + (p1Turn ? "Player 1" : "Player 2") + "'s turn";
     let pWin;
     let showPlayers;
 
-    if (isSelectedCampaign) {
+    if (showIsSelectedCampaign) {
       showMenu = (
         <div className="game-menu">
           <div className="game-label">
@@ -475,35 +443,38 @@ class Game extends Component {
       );
     }
 
-    if (resolvedText) {
-      showStatus = 'Next battle! Who will win the war?';
-      if (resolvedBattle) {
-        showStatus = 'Resolve Battle?';
-        if (bothSelected) {
-          showStatus = turnLog;
-        }
+
+    showStatus = "It is " + (p1Turn ? "Player 1" : "Player 2") + "'s turn";
+    if (bothSelected) {
+      showStatus = 'Resolve Battle?';
+      if (resolvedText) {
+        showStatus = resolvedText;
       }
     }
 
     for (let i = 0; i < users.length; i++) {
       if (users[i].HP <= 0) {
-        alert(users[i].name + ' HP: ' + users[i].HP + ', which means that ' + users[i].name + ' has lost.\nAnd all other players have won!');
-        pWin = (
-          <div className="victory">
-            <img src="https://imgur.com/H5Lm06M.gif" border="0" alt="Spongebob at the bubble bowl!"/>
-            <ul>
-              {users
-                .filter(points => points.HP > 0)
-                .map(item => (
-                  <li key={item.id}>
-                    `${item.name} has won sweet victory!`
-                  </li>
-                ))
-              }
-            </ul>
-          </div>
-        );
+        let [lost] = users.splice(i, 1);
+        alert(lost.name + ' HP: ' + lost.HP + ', which means that ' + lost.name + ' has lost.');
       }
+    }
+
+    if (users.length === 1) {
+      pWin = (
+        <div className="victory">
+          <img src="https://imgur.com/H5Lm06M.gif" border="0" alt="Spongebob at the bubble bowl!"/>
+          <ul>
+            {users
+              .filter(points => points.HP > 0)
+              .map(item => (
+                <li key={item.id}>
+                  {item.name} has won sweet victory!
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      );
     }
 
 
@@ -516,26 +487,25 @@ class Game extends Component {
           : <div className="results"></div>
         }
         <div className="player-stats">
-          <ul>
-            {users.slice(0, 2).map(item => {
-              return (
-              <li key={item.id}>
-                <User
-                  user_id={item.id}
-                  user_name={item.name}
-                  user_avatarURL={item.avatarURL}
-                  user_choice={item.choice}
-                  user_HP={item.HP}
-                  user_showPlayer={item.showPlayer}
-                />
-                {this.renderPlayer(item.id)}
-              </li>
-              )}).filter(item => {
+            {users.slice(0, 2)
+              .filter(item => item.showPlayer)
+              .map(item => {
                 return (
-                  !item.showPlayer
-              )})
+                <ul>
+                  <li key={item.id}>
+                    <User
+                      user_id={item.id}
+                      user_name={item.name}
+                      user_avatarURL={item.avatarURL}
+                      user_choice={item.choice}
+                      user_HP={item.HP}
+                      user_showPlayer={item.showPlayer}
+                    />
+                    {this.renderPlayer(item.id)}
+                  </li>
+                </ul>
+                )})
             }
-          </ul>
         </div>
       </div>
     );
@@ -563,6 +533,7 @@ class Game extends Component {
         </div>
         <div className="game-next">
           <Next
+            showNext={showNext}
             onClickNext={() => this.handleClickNext(users)}
           />
         </div>

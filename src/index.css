@@ -9,11 +9,15 @@ body {
   margin: 20px;
 }
 
-/* ol, ul {
-  padding-left: 30px;
-} */
+ol, ul {
+  float: right;
+}
 
-/* idk what this does */
+li {
+  list-style: none;
+}
+
+/* this may be for mouse pointer tracking */
 .kbd-navigation .game-player:focus {
   background: rgb(156, 24, 24);
 }
@@ -21,6 +25,7 @@ body {
 .game {
   display: flex;
   flex-direction: column;
+  text-align: center;
 }
 
 .game-title {
@@ -56,11 +61,8 @@ body {
 }
 
 .game-players {
-  display: flex;
-  flex-direction: row;
-  align-items: left;
   margin: 0px;
-  padding: 20px;
+  /* padding: 20px; */
   border: 1px solid rgb(28, 211, 4);
 }
 
@@ -68,6 +70,7 @@ body {
   display: flex;
   flex-direction: column;
   margin-left: 20px;
+  /* padding: 20px; */
 }
 
 .p-User {
@@ -75,22 +78,32 @@ body {
   border: 2px solid rgb(76, 8, 187);
 }
 
+.round {
+  text-align: center;
+  /* align-items: center; */
+  /* justify-content: center; */
+}
+
 .p-profile {
   color: rgb(231, 126, 5);
   border: 2px solid rgb(76, 8, 187);
-}
-
-.p-hp {
-  color: blue;
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  /* same margin-left as .player */
+  margin-left: 20px;
 }
 
 .p-form {
   color: rgb(231, 126, 5);
   border: 2px solid rgb(76, 8, 187);
+  padding: 20px;
 }
 
 .p-form-check {
   color: rgb(231, 126, 5);
+  margin-left: 10px;
+  text-align: left;
 }
 
 .p-form-check-input {
@@ -99,6 +112,7 @@ body {
 
 .p-form-group {
   color: rgb(231, 126, 5);
+  text-align: center;
 }
 
 .p-form-submit {
@@ -109,16 +123,18 @@ body {
   display: flex;
   flex-direction: column;
   text-align: center;
-  margin-left: 50px;
+  margin-left: 0px;
   color: rgb(31, 31, 31);
   font-family: Helvetica;
-  font-size: 50px;
+  font-size: 16px;
 }
 
 .player-stats {
   color: pink;
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  /* margin: 20px; */
 }
 
 .results {
@@ -138,7 +154,7 @@ body {
 .game-resolve {
   display: flex;
   flex-direction: row;
-  align-items: left;
+  justify-content: center;
   margin-right: 0px;
   margin-bottom: 0px;
   font-family: Helvetica;
@@ -150,7 +166,7 @@ body {
 .game-next {
   display: flex;
   flex-direction: row;
-  align-items: left;
+  justify-content: center;
   margin-right: 0px;
   margin-bottom: 0px;
   font-family: Helvetica;
