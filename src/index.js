@@ -14,6 +14,9 @@ import Dialog from '@material-ui/core/Dialog';
 import PersonIcon from '@material-ui/icons/Person';
 import Typography from '@material-ui/core/Typography';
 
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+
+
 const Next = ({ showNext, onClickNext }) =>
   showNext ?
   <button onClick={onClickNext}>
@@ -58,6 +61,43 @@ const User = ({ user_id, user_name, user_avatarURL, user_choice, user_HP, user_s
     <AvatarRound user_avatarURL={user_avatarURL} />
   </Profile>
 );
+
+class IconLabelButtons extends React.Component {
+
+  handleClick = (e) => {
+    this.props.onClick(e.target.value);
+  };
+
+  render() {
+
+    const { onClick, ...other } = this.props;
+
+    return (
+      <div>
+        <Button value={'spock'} onClick={(e) => this.handleClick(e)} variant="contained" color="default">
+          Spock
+          <CloudUploadIcon  />
+        </Button>
+        <Button value={'mage'} onClick={(e) => this.handleClick(e)} variant="contained" color="default">
+          Mage
+          <CloudUploadIcon  />
+        </Button>
+        <Button value={'melee'} onClick={(e) => this.handleClick(e)} variant="contained" color="default">
+          Melee
+          <CloudUploadIcon  />
+        </Button>
+        <Button value={'yolo'} onClick={(e) => this.handleClick(e)} variant="contained" color="default">
+          YOLO
+          <CloudUploadIcon  />
+        </Button>
+        <Button value={'whale'} onClick={(e) => this.handleClick(e)} variant="contained" color="default">
+          Whale
+          <CloudUploadIcon  />
+        </Button>
+      </div>
+    );
+  }
+}
 
 class SimpleDialog extends React.Component {
   handleClose = (value, users, id) => {
@@ -134,27 +174,29 @@ class Game extends Component {
       showResolve: false,
       showNext: false,
     };
-    this.handleChangeMenu = this.handleChangeMenu.bind(this);
+    // this.handleChangeMenu = this.handleChangeMenu.bind(this);
     this.handleSubmitMenu = this.handleSubmitMenu.bind(this);
     this.handleClickButton = this.handleClickButton.bind(this);
     this.handleClickResolve = this.handleClickResolve.bind(this);
     this.handleClickNext = this.handleClickNext.bind(this);
   }
 
-  handleChangeMenu(e) {
-    let atkNames = getAtkNames(e.target.value);
+  // handleChangeMenu(e) {
+  //   let atkNames = getAtkNames(e.target.value);
 
-    this.setState({
-      isSelectedCampaign: e.target.value,
-      attackNames: atkNames,
-    });
-  }
+  //   this.setState({
+  //     isSelectedCampaign: e.target.value,
+  //     attackNames: atkNames,
+  //   });
+  // }
 
-  handleSubmitMenu(e, users) {
+  handleSubmitMenu = (e, users) => {
 
     this.setState({
       isSelectedCampaign: this.state.isSelectedCampaign,
-      attackNames: this.state.attackNames,
+      attackNames: this.state.atkNames,
+      // isSelectedCampaign: this.state.isSelectedCampaign,
+      // attackNames: this.state.attackNames,
       users: [
         { id : users[0].id,
           name: users[0].name,
@@ -175,8 +217,16 @@ class Game extends Component {
       ],
       showIsSelectedCampaign: false,
     });
-    e.preventDefault();
   }
+
+
+
+
+
+
+
+
+
 
   handleClickOpen = (users, name) => {
     if (name === users[0].name) {
@@ -447,6 +497,10 @@ class Game extends Component {
     let simpleD;
     let atkBtn;
 
+    if(!users[id]) {
+      return null;
+    }
+
     if (users[id].choice === "" || bothSelected) {
       if (bothSelected) {
         simpleD = null;
@@ -524,30 +578,36 @@ class Game extends Component {
           <div className="game-label">
             Choose a new battle campaign!
           </div>
-          <form
-            onSubmit={(e) => this.handleSubmitMenu(e, users)}>
-            <label>
-              <select
-                value={isSelectedCampaign}
-                onChange={(e) => this.handleChangeMenu(e)}
-                id="menu"
-              >
-                <option value="spock">Spock</option>
-                <option value="mage">Mage</option>
-                <option value="melee">Melee</option>
-                <option value="yolo">YOLO</option>
-                <option value="whale">Whale</option>
-              </select>
-            </label>
-            <input
-              type="submit"
-              value="Submit"
-            />
-          </form>
+          <div>
+            <IconLabelButtons
+              onClick={(e) => this.handleSubmitMenu(e, users)}>
+            </IconLabelButtons>
+          </div>
         </div>
       );
     }
 
+    // extra
+      {/* <form
+        onSubmit={(e) => this.handleSubmitMenu(e, users)}>
+        <label>
+          <select
+            value={isSelectedCampaign}
+            onChange={(e) => this.handleChangeMenu(e)}
+            id="menu"
+          >
+            <option value="spock">Spock</option>
+            <option value="mage">Mage</option>
+            <option value="melee">Melee</option>
+            <option value="yolo">YOLO</option>
+            <option value="whale">Whale</option>
+          </select>
+        </label>
+        <input
+          type="submit"
+          value="Submit"
+        />
+      </form> */}
     showStatus = "It is " + (p1Turn ? "Player 1" : "Player 2") + "'s turn";
     if (bothSelected) {
       showStatus = 'Resolve Battle?';
