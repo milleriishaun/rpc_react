@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
@@ -59,6 +58,7 @@ const User = ({ user_id, user_name, user_avatarURL, user_choice, user_HP, user_s
     <AvatarRound user_avatarURL={user_avatarURL} />
   </Profile>
 );
+
 class SimpleDialog extends React.Component {
   handleClose = (value, users, id) => {
     this.props.onClose(value, users, id);
@@ -77,7 +77,7 @@ class SimpleDialog extends React.Component {
         <div>
           <List>
             {attackNames.map((attackName, i) => (
-              <ListItem button onClick={() => this.handleListItemClick('attacks' + ++i, users, id)} key={attackName}>
+              <ListItem button onClick={() => this.handleListItemClick('attack' + ++i, users, id)} key={attackName}>
                 <ListItemAvatar>
                   <Avatar>
                     <PersonIcon />
@@ -115,7 +115,6 @@ class Game extends Component {
           HP: 400,
           showPlayer: true,
           open: false,
-          selectedValue: "",
         },
         { id : '1',
           name: 'player2',
@@ -124,7 +123,6 @@ class Game extends Component {
           HP: 400,
           showPlayer: false,
           open: false,
-          selectedValue: "",
         },
       ],
       bothSelected: false,
@@ -138,10 +136,46 @@ class Game extends Component {
     };
     this.handleChangeMenu = this.handleChangeMenu.bind(this);
     this.handleSubmitMenu = this.handleSubmitMenu.bind(this);
-    this.handleChangeForm = this.handleChangeForm.bind(this);
     this.handleClickButton = this.handleClickButton.bind(this);
     this.handleClickResolve = this.handleClickResolve.bind(this);
     this.handleClickNext = this.handleClickNext.bind(this);
+  }
+
+  handleChangeMenu(e) {
+    let atkNames = getAtkNames(e.target.value);
+
+    this.setState({
+      isSelectedCampaign: e.target.value,
+      attackNames: atkNames,
+    });
+  }
+
+  handleSubmitMenu(e, users) {
+
+    this.setState({
+      isSelectedCampaign: this.state.isSelectedCampaign,
+      attackNames: this.state.attackNames,
+      users: [
+        { id : users[0].id,
+          name: users[0].name,
+          avatarURL: users[0].avatarURL,
+          HP: 500,
+          showPlayer: true,
+          open: false,
+          choice: users[0].choice,
+        },
+        { id : users[1].id,
+          name: users[1].name,
+          avatarURL: users[1].avatarURL,
+          HP: 500,
+          showPlayer: false,
+          open: false,
+          choice: users[1].choice,
+        },
+      ],
+      showIsSelectedCampaign: false,
+    });
+    e.preventDefault();
   }
 
   handleClickOpen = (users, name) => {
@@ -191,7 +225,7 @@ class Game extends Component {
   };
 
   handleClose = (value, users, name) => {
-    alert('value: ' + value + '\nname: ' + name + '\nusers: ' + users);
+    // alert('value: ' + value + '\nname: ' + name + '\nusers: ' + users);
     if (name === users[0].name) {
       this.setState({
         users: [
@@ -220,7 +254,7 @@ class Game extends Component {
             name: users[0].name,
             avatarURL: users[0].avatarURL,
             HP: users[0].HP,
-            showPlayer: true,
+            showPlayer: false,
             open: false,
             choice: users[0].choice,
           },
@@ -228,7 +262,7 @@ class Game extends Component {
             name: users[1].name,
             avatarURL: users[1].avatarURL,
             HP: users[1].HP,
-            showPlayer: false,
+            showPlayer: true,
             open: false,
             choice: value,
           },
@@ -237,94 +271,12 @@ class Game extends Component {
     }
   };
 
-  handleChangeMenu(e) {
-    let atkNames = getAtkNames(e.target.value);
-
-    this.setState({
-      isSelectedCampaign: e.target.value,
-      attackNames: atkNames,
-    });
-  }
-
-  handleSubmitMenu(e, users) {
-
-    this.setState({
-      isSelectedCampaign: this.state.isSelectedCampaign,
-      attackNames: this.state.attackNames,
-      users: [
-        { id : users[0].id,
-          name: users[0].name,
-          avatarURL: users[0].avatarURL,
-          HP: 500,
-          showPlayer: true,
-          open: false,
-          choice: users[0].choice,
-        },
-        { id : users[1].id,
-          name: users[1].name,
-          avatarURL: users[1].avatarURL,
-          HP: 500,
-          showPlayer: false,
-          open: false,
-          choice: users[1].choice,
-        },
-      ],
-      showIsSelectedCampaign: false,
-    });
-    e.preventDefault();
-  }
-
-  handleChangeForm(e, users, name) {
-    if (name === users[0].name) {
-      this.setState({
-        users: [
-          { id : users[0].id,
-            name: users[0].name,
-            avatarURL: users[0].avatarURL,
-            HP: users[0].HP,
-            showPlayer: users[0].showPlayer,
-            open: false,
-            choice: e.target.value,
-          },
-          { id : users[1].id,
-            name: users[1].name,
-            avatarURL: users[1].avatarURL,
-            HP: users[1].HP,
-            showPlayer: users[1].showPlayer,
-            open: false,
-            choice: users[1].choice,
-          },
-        ]
-      });
-    } else if(name === users[1].name) {
-      this.setState({
-        users: [
-          { id : users[0].id,
-            name: users[0].name,
-            avatarURL: users[0].avatarURL,
-            HP: users[0].HP,
-            showPlayer: users[0].showPlayer,
-            open: false,
-            choice: users[0].choice,
-          },
-          { id : users[1].id,
-            name: users[1].name,
-            avatarURL: users[1].avatarURL,
-            HP: users[1].HP,
-            showPlayer: users[1].showPlayer,
-            open: false,
-            choice: e.target.value,
-          },
-        ]
-      });
-    }
-  }
 
   handleClickButton(e, users, name) {
     if (name === users[0].name) {
       this.setState({
         users: [
-          { id : users[0].id,
+          { id : '0',
             name: users[0].name,
             avatarURL: users[0].avatarURL,
             HP: users[0].HP,
@@ -332,7 +284,7 @@ class Game extends Component {
             open: false,
             choice: users[0].choice,
           },
-          { id : users[1].id,
+          { id : '1',
             name: users[1].name,
             avatarURL: users[1].avatarURL,
             HP: users[1].HP,
@@ -346,7 +298,7 @@ class Game extends Component {
     } else if(name === users[1].name) {
       this.setState({
         users: [
-          { id : users[0].id,
+          { id : '0',
             name: users[0].name,
             avatarURL: users[0].avatarURL,
             HP: users[0].HP,
@@ -354,7 +306,7 @@ class Game extends Component {
             open: false,
             choice: users[0].choice,
           },
-          { id : users[1].id,
+          { id : '1',
             name: users[1].name,
             avatarURL: users[1].avatarURL,
             HP: users[1].HP,
@@ -372,6 +324,7 @@ class Game extends Component {
   }
 
   handleClickResolve(users) {
+    // alert('isSelectedCampaign: ' + this.state.isSelectedCampaign + 'c1: ' + users[0].choice + 'c2: ' + users[1].choice);
 
     let [damage, j, k] = calculateDamage(this.state.isSelectedCampaign, users[0].choice, users[1].choice);
 
@@ -491,18 +444,37 @@ class Game extends Component {
       bothSelected,
     } = this.state;
 
+    let simpleD;
     let atkBtn;
 
-    if (!users[id]) {
-      return null;
-    }
-
     if (users[id].choice === "" || bothSelected) {
+      if (bothSelected) {
+        simpleD = null;
+      } else {
+        simpleD =
+          <SimpleDialog
+            selectedValue={this.state.users[id].choice}
+            open={this.state.users[id].open}
+            onClose={(value) => this.handleClose(value, users, users[id].name)}
+            attackNames={attackNames}
+            users={users}
+            id={id}
+          />;
+      }
       atkBtn =
         <Button disabled>
           Attack!
-        </Button>
+        </Button>;
     } else {
+      simpleD =
+        <SimpleDialog
+          selectedValue={this.state.users[id].choice}
+          open={this.state.users[id].open}
+          onClose={(value) => this.handleClose(value, users, users[id].name)}
+          attackNames={attackNames}
+          users={users}
+          id={id}
+        />;
       atkBtn =
         <Button
           variant="outlined"
@@ -510,10 +482,8 @@ class Game extends Component {
           onClick={(e) => this.handleClickButton(e, users, users[id].name)}
         >
           Attack!
-        </Button>
+        </Button>;
     }
-
-
 
     return (
       <div className="player">
@@ -523,14 +493,7 @@ class Game extends Component {
           <Button variant="outlined" color="primary" onClick={() => this.handleClickOpen(users, users[id].name)}>
             CHOOSE ATTACK
           </Button>
-          <SimpleDialog
-            selectedValue={this.state.users[id].choice}
-            open={this.state.users[id].open}
-            onClose={(value) => this.handleClose(value, users, users[id].name)}
-            attackNames={attackNames}
-            users={users}
-            id={id}
-          />
+          {simpleD}
           <br/>
           {atkBtn}
         </div>
@@ -585,7 +548,6 @@ class Game extends Component {
       );
     }
 
-
     showStatus = "It is " + (p1Turn ? "Player 1" : "Player 2") + "'s turn";
     if (bothSelected) {
       showStatus = 'Resolve Battle?';
@@ -618,7 +580,6 @@ class Game extends Component {
         </div>
       );
     }
-
 
     let shownPlayers = users.filter(item => item.showPlayer);
 
