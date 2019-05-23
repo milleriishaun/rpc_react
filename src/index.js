@@ -2,6 +2,19 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+
+import PropTypes from 'prop-types';
+import Button from '@material-ui/core/Button';
+import Avatar from '@material-ui/core/Avatar';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemText from '@material-ui/core/ListItemText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
+import PersonIcon from '@material-ui/icons/Person';
+import Typography from '@material-ui/core/Typography';
+
 const Next = ({ showNext, onClickNext }) =>
   showNext ?
   <button onClick={onClickNext}>
@@ -46,6 +59,47 @@ const User = ({ user_id, user_name, user_avatarURL, user_choice, user_HP, user_s
     <AvatarRound user_avatarURL={user_avatarURL} />
   </Profile>
 );
+class SimpleDialog extends React.Component {
+  handleClose = (value, users, id) => {
+    this.props.onClose(value, users, id);
+  };
+
+  handleListItemClick = (value, users, id) => {
+    this.props.onClose(value, users, id);
+  };
+
+  render() {
+    const { classes, onClose, selectedValue, attackNames, users, id, ...other } = this.props;
+
+    return (
+      <Dialog onClose={(id) => this.handleClose(id)} aria-labelledby="simple-dialog-title" {...other}>
+        <DialogTitle id="simple-dialog-title">Set Attack</DialogTitle>
+        <div>
+          <List>
+            {attackNames.map((attackName, i) => (
+              <ListItem button onClick={() => this.handleListItemClick('attacks' + ++i, users, id)} key={attackName}>
+                <ListItemAvatar>
+                  <Avatar>
+                    <PersonIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={attackName} />
+              </ListItem>
+            ))}
+          </List>
+        </div>
+      </Dialog>
+    );
+  }
+}
+
+SimpleDialog.propTypes = {
+  classes: PropTypes.object.isRequired,
+  onClose: PropTypes.func,
+  selectedValue: PropTypes.string,
+  users: PropTypes.object,
+  attackNames: PropTypes.array,
+};
 
 class Game extends Component {
   constructor(props) {
@@ -60,6 +114,8 @@ class Game extends Component {
           choice: "",
           HP: 400,
           showPlayer: true,
+          open: false,
+          selectedValue: "",
         },
         { id : '1',
           name: 'player2',
@@ -67,6 +123,8 @@ class Game extends Component {
           choice: "",
           HP: 400,
           showPlayer: false,
+          open: false,
+          selectedValue: "",
         },
       ],
       bothSelected: false,
@@ -81,10 +139,103 @@ class Game extends Component {
     this.handleChangeMenu = this.handleChangeMenu.bind(this);
     this.handleSubmitMenu = this.handleSubmitMenu.bind(this);
     this.handleChangeForm = this.handleChangeForm.bind(this);
-    this.handleSubmitForm = this.handleSubmitForm.bind(this);
+    this.handleClickButton = this.handleClickButton.bind(this);
     this.handleClickResolve = this.handleClickResolve.bind(this);
     this.handleClickNext = this.handleClickNext.bind(this);
   }
+
+  handleClickOpen = (users, name) => {
+    if (name === users[0].name) {
+      this.setState({
+        users: [
+          { id : '0',
+            name: users[0].name,
+            avatarURL: users[0].avatarURL,
+            HP: users[0].HP,
+            showPlayer: true,
+            open: true,
+            choice: users[0].choice,
+          },
+          { id : '1',
+            name: users[1].name,
+            avatarURL: users[1].avatarURL,
+            HP: users[1].HP,
+            showPlayer: false,
+            open: false,
+            choice: users[1].choice,
+          },
+        ],
+      });
+    } else if(name === users[1].name) {
+      this.setState({
+        users: [
+          { id : '0',
+            name: users[0].name,
+            avatarURL: users[0].avatarURL,
+            HP: users[0].HP,
+            showPlayer: false,
+            open: false,
+            choice: users[0].choice,
+          },
+          { id : '1',
+            name: users[1].name,
+            avatarURL: users[1].avatarURL,
+            HP: users[1].HP,
+            showPlayer: true,
+            open: true,
+            choice: users[1].choice,
+          },
+        ],
+      });
+    }
+  };
+
+  handleClose = (value, users, name) => {
+    alert('value: ' + value + '\nname: ' + name + '\nusers: ' + users);
+    if (name === users[0].name) {
+      this.setState({
+        users: [
+          { id : '0',
+            name: users[0].name,
+            avatarURL: users[0].avatarURL,
+            HP: users[0].HP,
+            showPlayer: true,
+            open: false,
+            choice: value,
+          },
+          { id : '1',
+            name: users[1].name,
+            avatarURL: users[1].avatarURL,
+            HP: users[1].HP,
+            showPlayer: false,
+            open: false,
+            choice: users[1].choice,
+          },
+        ],
+      });
+    } else if(name === users[1].name) {
+      this.setState({
+        users: [
+          { id : '0',
+            name: users[0].name,
+            avatarURL: users[0].avatarURL,
+            HP: users[0].HP,
+            showPlayer: true,
+            open: false,
+            choice: users[0].choice,
+          },
+          { id : '1',
+            name: users[1].name,
+            avatarURL: users[1].avatarURL,
+            HP: users[1].HP,
+            showPlayer: false,
+            open: false,
+            choice: value,
+          },
+        ],
+      });
+    }
+  };
 
   handleChangeMenu(e) {
     let atkNames = getAtkNames(e.target.value);
@@ -104,16 +255,18 @@ class Game extends Component {
         { id : users[0].id,
           name: users[0].name,
           avatarURL: users[0].avatarURL,
-          choice: users[0].choice,
           HP: 500,
           showPlayer: true,
+          open: false,
+          choice: users[0].choice,
         },
         { id : users[1].id,
           name: users[1].name,
           avatarURL: users[1].avatarURL,
-          choice: users[1].choice,
           HP: 500,
           showPlayer: false,
+          open: false,
+          choice: users[1].choice,
         },
       ],
       showIsSelectedCampaign: false,
@@ -128,16 +281,18 @@ class Game extends Component {
           { id : users[0].id,
             name: users[0].name,
             avatarURL: users[0].avatarURL,
-            choice: e.target.value,
             HP: users[0].HP,
             showPlayer: users[0].showPlayer,
+            open: false,
+            choice: e.target.value,
           },
           { id : users[1].id,
             name: users[1].name,
             avatarURL: users[1].avatarURL,
-            choice: users[1].choice,
             HP: users[1].HP,
             showPlayer: users[1].showPlayer,
+            open: false,
+            choice: users[1].choice,
           },
         ]
       });
@@ -147,39 +302,43 @@ class Game extends Component {
           { id : users[0].id,
             name: users[0].name,
             avatarURL: users[0].avatarURL,
-            choice: users[0].choice,
             HP: users[0].HP,
             showPlayer: users[0].showPlayer,
+            open: false,
+            choice: users[0].choice,
           },
           { id : users[1].id,
             name: users[1].name,
             avatarURL: users[1].avatarURL,
-            choice: e.target.value,
             HP: users[1].HP,
             showPlayer: users[1].showPlayer,
+            open: false,
+            choice: e.target.value,
           },
         ]
       });
     }
   }
 
-  handleSubmitForm(e, users, name) {
+  handleClickButton(e, users, name) {
     if (name === users[0].name) {
       this.setState({
         users: [
           { id : users[0].id,
             name: users[0].name,
             avatarURL: users[0].avatarURL,
-            choice: users[0].choice,
             HP: users[0].HP,
             showPlayer: !users[0].showPlayer,
+            open: false,
+            choice: users[0].choice,
           },
           { id : users[1].id,
             name: users[1].name,
             avatarURL: users[1].avatarURL,
-            choice: users[1].choice,
             HP: users[1].HP,
             showPlayer: !users[1].showPlayer,
+            open: false,
+            choice: users[1].choice,
           },
         ],
         p1Turn: !this.state.p1Turn,
@@ -190,16 +349,18 @@ class Game extends Component {
           { id : users[0].id,
             name: users[0].name,
             avatarURL: users[0].avatarURL,
-            choice: users[0].choice,
             HP: users[0].HP,
             showPlayer: users[0].showPlayer,
+            open: false,
+            choice: users[0].choice,
           },
           { id : users[1].id,
             name: users[1].name,
             avatarURL: users[1].avatarURL,
-            choice: users[1].choice,
             HP: users[1].HP,
             showPlayer: !users[1].showPlayer,
+            open: false,
+            choice: users[1].choice,
           },
         ],
         p1Turn: !this.state.p1Turn,
@@ -220,16 +381,18 @@ class Game extends Component {
           { id : users[0].id,
             name: users[0].name,
             avatarURL: users[0].avatarURL,
-            choice: users[0].choice,
             HP: users[0].HP - damage,
             showPlayer: true,
+            open: false,
+            choice: users[0].choice,
           },
           { id : users[1].id,
             name: users[1].name,
             avatarURL: users[1].avatarURL,
-            choice: users[1].choice,
             HP: users[1].HP,
             showPlayer: true,
+            open: false,
+            choice: users[1].choice,
           },
         ],
         resolvedBattle: true,
@@ -244,16 +407,18 @@ class Game extends Component {
           { id : users[0].id,
             name: users[0].name,
             avatarURL: users[0].avatarURL,
-            choice: users[0].choice,
             HP: users[0].HP,
             showPlayer: true,
+            open: false,
+            choice: users[0].choice,
           },
           { id : users[1].id,
             name: users[1].name,
             avatarURL: users[1].avatarURL,
-            choice: users[1].choice,
             HP: users[1].HP - damage,
             showPlayer: true,
+            open: false,
+            choice: users[1].choice,
           },
         ],
         resolvedBattle: true,
@@ -268,16 +433,18 @@ class Game extends Component {
           { id : users[0].id,
             name: users[0].name,
             avatarURL: users[0].avatarURL,
-            choice: users[0].choice,
             HP: users[0].HP,
             showPlayer: true,
+            open: false,
+            choice: users[0].choice,
           },
           { id : users[1].id,
             name: users[1].name,
             avatarURL: users[1].avatarURL,
-            choice: users[1].choice,
             HP: users[1].HP,
             showPlayer: true,
+            open: false,
+            choice: users[1].choice,
           },
         ],
         resolvedBattle: true,
@@ -294,16 +461,18 @@ class Game extends Component {
         { id : users[0].id,
           name: users[0].name,
           avatarURL: users[0].avatarURL,
-          choice: "",
           HP: users[0].HP,
           showPlayer: true,
+          open: false,
+          choice: "",
         },
         { id : users[1].id,
           name: users[1].name,
           avatarURL: users[1].avatarURL,
-          choice: "",
           HP: users[1].HP,
           showPlayer: false,
+          open: false,
+          choice: "",
         },
       ],
       p1WonBattle: false,
@@ -330,67 +499,40 @@ class Game extends Component {
 
     if (users[id].choice === "" || bothSelected) {
       atkBtn =
-        <button disabled>
+        <Button disabled>
           Attack!
-        </button>
+        </Button>
     } else {
       atkBtn =
-        <button
-          className="p-form-submit"
-          type="submit"
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={(e) => this.handleClickButton(e, users, users[id].name)}
         >
           Attack!
-        </button>
+        </Button>
     }
+
+
 
     return (
       <div className="player">
-        <div className="p-form">
-          <form
-            onSubmit={(e) => this.handleSubmitForm(e, users, users[id].name)}
-          >
-            <div className="p-form-check">
-              <label for="attack1" id="attack1_label">
-                <input type="radio" name="attack" value="attack1" checked={users[id].choice === 'attack1'} onChange={(e) => this.handleChangeForm(e, users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack1"/>
-                {attackNames[0]}
-              </label>
-              <br/>
-            </div>
-            <div className="p-form-check">
-              <label for="attack2" id="attack2_label">
-                <input type="radio" name="attack" value="attack2" checked={users[id].choice === 'attack2'} onChange={(e) => this.handleChangeForm(e, users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack2"/>
-                {attackNames[1]}
-              </label>
-              <br/>
-            </div>
-            <div className="p-form-check">
-              <label for="attack3" id="attack3_label">
-                <input type="radio" name="attack" value="attack3" checked={users[id].choice === 'attack3'} onChange={(e) => this.handleChangeForm(e, users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack3"/>
-                {attackNames[2]}
-              </label>
-              <br/>
-            </div>
-            <div className="p-form-check">
-              <label for="attack4" id="attack4_label">
-                <input type="radio" name="attack" value="attack4" checked={users[id].choice === 'attack4'} onChange={(e) => this.handleChangeForm(e, users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack4"/>
-                {attackNames[3]}
-              </label>
-              <br/>
-            </div>
-            <div className="p-form-check">
-              <label for="attack5" id="attack5_label">
-                <input type="radio" name="attack" value="attack5" checked={users[id].choice === 'attack5'} onChange={(e) => this.handleChangeForm(e, users, users[id].name, users[id].choice)} className="p-form-check-input" id="attack5"/>
-                {attackNames[4]}
-              </label>
-              <br/>
-            </div>
-            <div className="p-form-group">
-              {atkBtn}
-            </div>
-          </form>
-        </div>
-        <div className="p-choice">
-          {attackNames[(users[id].choice[ users[id].choice.length - 1 ]) - 1]}
+        <div  className="p-menu-wrapper">
+          <Typography variant="subtitle1">Selected: {attackNames[users[id].choice[users[id].choice.length - 1] - 1]}</Typography>
+          <br />
+          <Button variant="outlined" color="primary" onClick={() => this.handleClickOpen(users, users[id].name)}>
+            CHOOSE ATTACK
+          </Button>
+          <SimpleDialog
+            selectedValue={this.state.users[id].choice}
+            open={this.state.users[id].open}
+            onClose={(value) => this.handleClose(value, users, users[id].name)}
+            attackNames={attackNames}
+            users={users}
+            id={id}
+          />
+          <br/>
+          {atkBtn}
         </div>
       </div>
     );
@@ -487,24 +629,24 @@ class Game extends Component {
           : <div className="results"></div>
         }
         <div className="player-stats">
-            {users.slice(0, 2)
-              .filter(item => item.showPlayer)
-              .map(item => {
-                return (
-                <ul>
-                  <li key={item.id}>
-                    <User
-                      user_id={item.id}
-                      user_name={item.name}
-                      user_avatarURL={item.avatarURL}
-                      user_choice={item.choice}
-                      user_HP={item.HP}
-                      user_showPlayer={item.showPlayer}
-                    />
-                    {this.renderPlayer(item.id)}
-                  </li>
-                </ul>
-                )})
+          {users.slice(0, 2)
+            .filter(item => item.showPlayer)
+            .map(item => {
+              return (
+              <ul>
+                <li key={item.id}>
+                  <User
+                    user_id={item.id}
+                    user_name={item.name}
+                    user_avatarURL={item.avatarURL}
+                    user_choice={item.choice}
+                    user_HP={item.HP}
+                    user_showPlayer={item.showPlayer}
+                  />
+                  {this.renderPlayer(item.id)}
+                </li>
+              </ul>
+              )})
             }
         </div>
       </div>

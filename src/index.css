@@ -73,6 +73,11 @@ li {
   /* padding: 20px; */
 }
 
+.p-menu-wrapper {
+  background-color: blue, 100;
+  color: blue, 500;
+}
+
 .p-User {
   color: rgb(231, 126, 5);
   border: 2px solid rgb(76, 8, 187);
