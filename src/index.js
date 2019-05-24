@@ -65,6 +65,7 @@ const User = ({ user_id, user_name, user_avatarURL, user_choice, user_HP, user_s
 class IconLabelButtons extends React.Component {
 
   handleClick = (e) => {
+    alert('hit1, etargetvalue: ' + e.target.value);
     this.props.onClick(e.target.value);
   };
 
@@ -190,15 +191,14 @@ class Game extends Component {
   //   });
   // }
 
-  handleSubmitMenu = (e, users) => {
-
+  handleSubmitMenu = (val, users) => {
+    alert('hit3, val: ' + val);
+    let atkNames = getAtkNames(val);
     this.setState({
-      isSelectedCampaign: this.state.isSelectedCampaign,
-      attackNames: this.state.atkNames,
-      // isSelectedCampaign: this.state.isSelectedCampaign,
-      // attackNames: this.state.attackNames,
+      isSelectedCampaign: val,
+      attackNames: atkNames,
       users: [
-        { id : users[0].id,
+        { id : '0',
           name: users[0].name,
           avatarURL: users[0].avatarURL,
           HP: 500,
@@ -206,7 +206,7 @@ class Game extends Component {
           open: false,
           choice: users[0].choice,
         },
-        { id : users[1].id,
+        { id : '1',
           name: users[1].name,
           avatarURL: users[1].avatarURL,
           HP: 500,
@@ -550,6 +550,7 @@ class Game extends Component {
           {simpleD}
           <br/>
           {atkBtn}
+
         </div>
       </div>
     );
@@ -573,6 +574,7 @@ class Game extends Component {
     let showPlayers;
 
     if (showIsSelectedCampaign) {
+      alert('hit2');
       showMenu = (
         <div className="game-menu">
           <div className="game-label">
@@ -580,7 +582,7 @@ class Game extends Component {
           </div>
           <div>
             <IconLabelButtons
-              onClick={(e) => this.handleSubmitMenu(e, users)}>
+              onClick={(val) => this.handleSubmitMenu(val, users)}>
             </IconLabelButtons>
           </div>
         </div>
