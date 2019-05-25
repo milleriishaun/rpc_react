@@ -65,7 +65,7 @@ const User = ({ user_id, user_name, user_avatarURL, user_choice, user_HP, user_s
 class IconLabelButtons extends React.Component {
 
   handleClick = (e) => {
-    alert('hit1, etargetvalue: ' + e.target.value);
+    alert('hit1, etvalue: ' + e.target.value);
     this.props.onClick(e.target.value);
   };
 
